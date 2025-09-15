@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Set body background to prevent white showing through */
+body {
+  background: linear-gradient(to bottom, #f8fcff 0%, #b3ecff 100%);
+  min-height: 100vh;
+}
+
+/* Fixed background for the page */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #f8fcff 0%, #b3ecff 100%);
+  z-index: -1;
+  pointer-events: none;
+}

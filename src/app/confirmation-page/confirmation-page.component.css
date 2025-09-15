@@ -1,0 +1,98 @@
+/* Custom styles to match the exact original design */
+
+/* Ensure proper RTL support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Custom color adjustments to match original design */
+.text-blue-600 {
+  color: #2563eb !important;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe !important;
+}
+
+.text-green-600 {
+  color: #16a34a !important;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7 !important;
+}
+
+.text-purple-600 {
+  color: #9333ea !important;
+}
+
+.bg-purple-100 {
+  background-color: #f3e8ff !important;
+}
+
+.text-orange-600 {
+  color: #ea580c !important;
+}
+
+.bg-orange-100 {
+  background-color: #fed7aa !important;
+}
+
+.text-red-800 {
+  color: #991b1b !important;
+}
+
+.bg-red-100 {
+  background-color: #fee2e2 !important;
+}
+
+.border-red-300 {
+  border-color: #fca5a5 !important;
+}
+
+.bg-red-500 {
+  background-color: #ef4444 !important;
+}
+
+.bg-orange-500 {
+  background-color: #f97316 !important;
+}
+
+.bg-green-600 {
+  background-color: #16a34a !important;
+}
+
+.hover\:bg-green-700:hover {
+  background-color: #15803d !important;
+}
+
+/* Ensure proper spacing for Arabic text */
+.space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+/* Custom button hover effects */
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Ensure images are properly responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Custom radio button styling */
+input[type="radio"] {
+  accent-color: #ef4444;
+}
+
+/* Ensure proper text rendering for Arabic */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

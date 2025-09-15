@@ -1,0 +1,559 @@
+<!-- NEVY'S LANGUAGE Confirmation Page -->
+<div class="min-h-screen" dir="rtl">
+  <!-- Header with Logo -->
+  <header class="py-6 px-4">
+    <div class="w-[120px] max-w-1xl mx-auto flex justify-center">
+      <img src="assets/images/NevysLogo_Digital-02.png" alt="NEVY'S LANGUAGE" class="h-16 md:h-20">
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative  from-blue-50 to-white py-12 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl md:text-3xl text-gray-800 mb-6">
+            اكتشف مستوياتنا و مُدرسينا و أسعارنا والمزيد !
+        </h1>
+      </div>
+      
+      <!-- Hero Image -->
+      <div class="relative max-w-4xl mx-auto">
+        <img src="assets/images/hero-image.png" alt="NEVY'S LANGUAGE" class="w-full h-auto rounded-lg shadow-lg">
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Levels Section -->
+  <section class="py-7 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-center  mb-12">مستوياتنا</h2>
+      
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+            <div class="flex items-start space-x-4 space-x-reverse">
+              <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+              <p class="text-gray-700 text-lg">لحظة تسجيلك، ستخضع لاختبار تحديد مستوى احترافي لتبدأ من المستوى المناسب لك.
+            </p>
+            </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">نقدّم 6 مستويات، من المبتدئ تمامًا وصولًا إلى الإنجليزية للأعمال، بالإضافة إلى مستوى مخصص للأطفال.
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">تُمنح شهادة رسمية عند إتمام كل مستوى.
+            </p>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <img src="assets/images/levels-ar-page.jpeg" alt="Our Levels" class="w-full h-auto rounded-lg shadow-lg cursor-pointer hover:opacity-90 transition-opacity duration-200" (click)="openModal('assets/images/levels-ar-page.jpeg')">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Teachers Section -->
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">مُدرسونا
+    </h2>
+      
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="relative order-2 md:order-1">
+          <img src="assets/images/nevys-classes-teachers.png" alt="Our Teachers" class="w-full h-auto rounded-lg shadow-lg cursor-pointer hover:opacity-90 transition-opacity duration-200" (click)="openModal('assets/images/nevys-classes-teachers.png')">
+        </div>
+        
+        <div class="space-y-6 order-1 md:order-2">
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <p class="text-gray-700 text-lg">في Nevy’s، أكثر من 40 مدرسًا معتمدًا في مجال ESL (تعليم اللغة الإنجليزية كلغة ثانية) 🇨🇦🇺🇸🇿🇦 جاهزون لدعمك ورعايتك باحترافيه.
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+
+            <p class="text-gray-700 text-lg">🔥 دروس تفاعلية، نَهج شخصي، وأجواء محفِّزة.
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+
+            <p class="text-gray-700 text-lg">👥 اختر المدرس الذي يلهمك ويحفزك.
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+
+            <p class="text-gray-700 text-lg">🎯 النتيجة: تقدم سريع وكسب الثقه بالنفس.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platform and Materials Section -->
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">منصتنا والمواد التعليمية
+    </h2>
+      
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <p class="text-gray-700 text-lg">منصتنا سَلِسة الاستعمال وتتيح لك الوصول إلى:
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            
+            <p class="text-gray-700 text-lg">📚 كُتُب رقمية، تمارين موَجِهة، موارد مُميزة (بقيمة تزيد عن 1000 دولار).
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">🎥 دروس مُسجلة  و متاحة في أي وقت.
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">📱 مُتاحة على الهاتف، والتابلت، أو الكمبيوتر.
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            
+            <p class="text-gray-700 text-lg">مساحة متكاملة للتعلم بفعالية، أينما كنت!
+                .
+            </p>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <img src="assets/images/red1pic.png" alt="Platform and Materials" class="w-full h-auto rounded-lg shadow-lg">
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Our Consultants Section -->
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">مُستشارونا</h2>
+      
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <!-- <div class="relative order-2 md:order-1">
+          <img src="assets/images/red-pic-2.png" alt="Our Consultants" class="w-full h-auto rounded-lg shadow-lg">
+        </div> -->
+        
+        <div class="space-y-6 order-1 md:order-2">
+          <div class="flex items-start space-x-4 space-x-reverse">
+            
+            <p class="text-gray-700 text-lg">في Nevy’s، لست وحدك أبدًا. مُنذ لحظة تسجيلك، يتِم تعيين مستشار شخصي لك 🤝 — وهذا دعم نادرا ما تجده في اي
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <p class="text-gray-700 text-lg">مكان اخر و يساعدك في:
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">✅ تقييم مستواك
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">🗓️ وضع جدولك الزمني
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">👩‍🏫 اختيار المدرسين المناسبين
+
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">📈 متابعة تقدمك أسبوعيًا
+
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <div class="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-2"></div>
+            <p class="text-gray-700 text-lg">📞 متاح 5 أيام في الأسبوع عبر الهاتف أو البريد الإلكتروني أو الدردشة
+            </p>
+          </div>
+          <div class="flex items-start space-x-4 space-x-reverse">
+            <p class="text-gray-700 text-lg">دعم بشري متواصل ومكرّس لنجاحك — حصريًا في Nevy’s
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prices and Programs Section -->
+  <section id="pricing-section" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">الأسعار والبرامج
+    </h2>
+      
+      <div class="relative">
+        <img src="assets/images/price-image-ar.jpeg" alt="Platform and Materials" class="w-full h-auto rounded-lg shadow-lg cursor-pointer hover:opacity-90 transition-opacity duration-200" (click)="openModal('assets/images/price-image-ar.jpeg')">
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section id="carousel-section" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+            تقييم  4.7 🌟على جوجل و بناءً على أكثر من 150 تقييمًا!
+        </h2>
+      </div>
+      
+     <div class="carousel-testimonials relative max-w-4xl mx-auto">
+        <div class="relative overflow-hidden rounded-lg bg-white">
+          <div class="flex transition-transform duration-300 ease-in-out" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+            <div class="w-full flex-shrink-0 min-h-[300px] flex items-center justify-center">
+              <img src="assets/images/Nevys-reviews-0.png" alt="Review 1" class="max-w-full max-h-[300px] object-contain" 
+                   (error)="onImageError($event)" (load)="onImageLoad($event)">
+            </div>
+            <div class="w-full flex-shrink-0 min-h-[300px] flex items-center justify-center">
+              <img src="assets/images/Nevys-reviews-1.png" alt="Review 2" class="max-w-full max-h-[300px] object-contain"
+                   (error)="onImageError($event)" (load)="onImageLoad($event)">
+            </div>
+            <div class="w-full flex-shrink-0 min-h-[300px] flex items-center justify-center">
+              <img src="assets/images/Nevys-reviews-2.png" alt="Review 3" class="max-w-full max-h-[300px] object-contain"
+                   (error)="onImageError($event)" (load)="onImageLoad($event)">
+            </div>
+            <div class="w-full flex-shrink-0 min-h-[300px] flex items-center justify-center">
+              <img src="assets/images/Nevys-reviews-3.png" alt="Review 4" class="max-w-full max-h-[300px] object-contain"
+                   (error)="onImageError($event)" (load)="onImageLoad($event)">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Navigation Arrows -->
+        <button (click)="previousSlide(); onSlideInteraction()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        
+        <button (click)="nextSlide(); onSlideInteraction()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200">
+          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        
+        <!-- Dots Indicator -->
+        <div class="flex justify-center mt-4 space-x-2">
+          <button *ngFor="let slide of slides; let i = index" 
+                  (click)="goToSlide(i); onSlideInteraction()"
+                  class="w-3 h-3 rounded-full transition-all duration-200"
+                  [class.bg-blue-600]="i === currentSlide"
+                  [class.bg-gray-300]="i !== currentSlide">
+          </button>
+        </div>
+     </div>
+    </div>
+  </section>
+
+  <!-- Final Confirmation Section -->
+  <section class="py-16 px-4">
+    <div class="max-w-4xl mx-auto">
+      <!-- Street View Image -->
+      <div class="mb-8">
+        <img src="assets/images/red-pic-2.png" alt="Street View" class="w-full h-64 object-cover rounded-lg shadow-lg">
+      </div>
+      
+      <!-- Confirmation Form -->
+      <div class="bg-white bg-opacity-90 border-2 border-gray-200 rounded-lg p-2 shadow-lg">
+        <h3 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">
+          اختر ردك
+        </h3>
+        
+        <form class="space-y-6">
+          <!-- Choice Selection -->
+          <div class="space-y-4">
+            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-4 rounded-lg border-2 transition-all duration-200" 
+                   [style.background-color]="selectedChoice === 'cancel' ? '#054e6d' : 'white'"
+                   [class.border-teal-300]="selectedChoice === 'cancel'"
+                   [class.border-gray-200]="selectedChoice !== 'cancel'">
+              <input type="radio" name="choice" value="cancel" [(ngModel)]="selectedChoice" (change)="onChoiceChange('cancel')" class="w-5 h-5" style="accent-color: #054e6d;">
+              <span class="text-base" [class.text-white]="selectedChoice === 'cancel'" [class.text-gray-800]="selectedChoice !== 'cancel'">أود الإلغاء - شكراً يرجى عدم الاتصال بي</span>
+            </label>
+            
+            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-4 rounded-lg border-2 transition-all duration-200"
+                   [style.background-color]="selectedChoice === 'confirm' ? '#054e6d' : 'white'"
+                   [class.border-teal-300]="selectedChoice === 'confirm'"
+                   [class.border-gray-200]="selectedChoice !== 'confirm'">
+              <input type="radio" name="choice" value="confirm" [(ngModel)]="selectedChoice" (change)="onChoiceChange('confirm')" class="w-5 h-5" style="accent-color: #054e6d;">
+              <span class="text-base" [class.text-white]="selectedChoice === 'confirm'" [class.text-gray-800]="selectedChoice !== 'confirm'">أؤكد اهتمامي - يرجى الاتصال بي</span>
+            </label>
+          </div>
+          
+          <!-- Cancel Form (shown when cancel is selected) -->
+          <div *ngIf="selectedChoice === 'cancel'" class="space-y-6 mt-8">
+            <h4 class="text-xl font-semibold text-gray-800">يرجى إبلاغنا بسبب الإلغاء...*</h4>
+            <p class="text-gray-600">يرجى اختيار جميع الأسباب التي تنطبق عليك.</p>
+            
+            <div class="space-y-1">
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="isCancellationReasonSelected('price') ? '#054e6d' : 'white'">
+                <input type="checkbox" class="w-5 h-5 rounded" style="accent-color: #054e6d;"
+                       #priceCheckbox (change)="onCancellationReasonChange('price', priceCheckbox.checked)">
+                <span class="text-base" [class.text-white]="isCancellationReasonSelected('price')" [class.text-gray-800]="!isCancellationReasonSelected('price')">السعر مرتفع جداً بالنسبة لي</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="isCancellationReasonSelected('timing') ? '#054e6d' : 'white'">
+                <input type="checkbox" class="w-5 h-5 rounded" style="accent-color: #054e6d;"
+                       #timingCheckbox (change)="onCancellationReasonChange('timing', timingCheckbox.checked)">
+                <span class="text-base" [class.text-white]="isCancellationReasonSelected('timing')" [class.text-gray-800]="!isCancellationReasonSelected('timing')">الجداول الزمنية غير مناسبة لي</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="isCancellationReasonSelected('schedule') ? '#054e6d' : 'white'">
+                <input type="checkbox" class="w-5 h-5 rounded" style="accent-color: #054e6d;"
+                       #scheduleCheckbox (change)="onCancellationReasonChange('schedule', scheduleCheckbox.checked)">
+                <span class="text-base" [class.text-white]="isCancellationReasonSelected('schedule')" [class.text-gray-800]="!isCancellationReasonSelected('schedule')">جدول أعمالي الحالي لا يسمح لي بحضور الدروس (كنت أستعلم فقط)</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="isCancellationReasonSelected('payment') ? '#054e6d' : 'white'">
+                <input type="checkbox" class="w-5 h-5 rounded" style="accent-color: #054e6d;"
+                       #paymentCheckbox (change)="onCancellationReasonChange('payment', paymentCheckbox.checked)">
+                <span class="text-base" [class.text-white]="isCancellationReasonSelected('payment')" [class.text-gray-800]="!isCancellationReasonSelected('payment')">لدي شكوك بشأن أمان وموثوقية الدفع الإلكتروني بالبطاقة لدى المؤسسة</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="isCancellationReasonSelected('prefer-inperson') ? '#054e6d' : 'white'">
+                <input type="checkbox" class="w-5 h-5 rounded" style="accent-color: #054e6d;"
+                       #preferInpersonCheckbox (change)="onCancellationReasonChange('prefer-inperson', preferInpersonCheckbox.checked)">
+                <span class="text-base" [class.text-white]="isCancellationReasonSelected('prefer-inperson')" [class.text-gray-800]="!isCancellationReasonSelected('prefer-inperson')">أفضل الدروس الحضورية</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="isCancellationReasonSelected('other') ? '#054e6d' : 'white'">
+                <input type="checkbox" class="w-5 h-5 rounded" style="accent-color: #054e6d;"
+                       #otherCheckbox (change)="onCancellationReasonChange('other', otherCheckbox.checked)">
+                <span class="text-base" [class.text-white]="isCancellationReasonSelected('other')" [class.text-gray-800]="!isCancellationReasonSelected('other')">سبب آخر غير المذكور أعلاه</span>
+              </label>
+            </div>
+            
+            <!-- Subscription Question -->
+            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+              <p class="text-gray-800 mb-4">نود أن نرسل لك دروساً مجانية لتعلم اللغة الإنجليزية، ورسائل تحفيزية، وعروضنا الترويجية، والمزيد. هل تود الاشتراك؟</p>
+              <p class="text-sm text-gray-600 mb-4">(يمكنك إلغاء الاشتراك في أي وقت.)*</p>
+              <p class="text-sm text-gray-600 mb-4">و سنستخدم أي وسيلة اتصال متاحة للوصول إليك بناءً على بياناتك.</p>
+              
+              <div class="space-y-1">
+                <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                       [style.background-color]="selectedSubscription === 'yes' ? '#054e6d' : 'white'">
+                  <input type="radio" name="subscription" value="yes" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onSubscriptionChange('yes')">
+                  <span class="text-base" [class.text-white]="selectedSubscription === 'yes'" [class.text-gray-800]="selectedSubscription !== 'yes'">نعم</span>
+                </label>
+                <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                       [style.background-color]="selectedSubscription === 'no' ? '#054e6d' : 'white'">
+                  <input type="radio" name="subscription" value="no" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onSubscriptionChange('no')">
+                  <span class="text-base" [class.text-white]="selectedSubscription === 'no'" [class.text-gray-800]="selectedSubscription !== 'no'">لا</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Confirm Form (shown when confirm is selected) -->
+          <div *ngIf="selectedChoice === 'confirm'" class="space-y-6 mt-8">
+            <h4 class="text-xl font-semibold text-gray-800">متى ترغب في البدء؟*</h4>
+            
+            <div class="space-y-1">
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="selectedStartTime === 'now' ? '#054e6d' : 'white'">
+                <input type="radio" name="startTime" value="now" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onStartTimeChange('now')">
+                <span class="text-base" [class.text-white]="selectedStartTime === 'now'" [class.text-gray-800]="selectedStartTime !== 'now'">الآن</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="selectedStartTime === 'nextWeek' ? '#054e6d' : 'white'">
+                <input type="radio" name="startTime" value="nextWeek" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onStartTimeChange('nextWeek')">
+                <span class="text-base" [class.text-white]="selectedStartTime === 'nextWeek'" [class.text-gray-800]="selectedStartTime !== 'nextWeek'">الأسبوع القادم</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="selectedStartTime === 'nextMonth' ? '#054e6d' : 'white'">
+                <input type="radio" name="startTime" value="nextMonth" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onStartTimeChange('nextMonth')">
+                <span class="text-base" [class.text-white]="selectedStartTime === 'nextMonth'" [class.text-gray-800]="selectedStartTime !== 'nextMonth'">الشهر القادم</span>
+              </label>
+              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                     [style.background-color]="selectedStartTime === 'comingMonths' ? '#054e6d' : 'white'">
+                <input type="radio" name="startTime" value="comingMonths" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onStartTimeChange('comingMonths')">
+                <span class="text-base" [class.text-white]="selectedStartTime === 'comingMonths'" [class.text-gray-800]="selectedStartTime !== 'comingMonths'">خلال الأشهر القادمة</span>
+              </label>
+            </div>
+            
+            <!-- Payment Question -->
+            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+              <p class="text-gray-800 mb-4">قد تكون مهاجراً ولا تتوفر لديك التسهيلات المصرفية بعد. خدماتنا تدفع فقط عن طريق بطاقات الائتمان / الخصم، أو عبر باي بال. هل تستطيع حالياً إجراء عملية شراء بإستخدام إحدى هذه الطرق؟</p>
+              
+              <div class="space-y-1">
+                <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                       [style.background-color]="selectedPayment === 'yesUsed' ? '#054e6d' : 'white'">
+                  <input type="radio" name="payment" value="yesUsed" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onPaymentChange('yesUsed')">
+                  <span class="text-base" [class.text-white]="selectedPayment === 'yesUsed'" [class.text-gray-800]="selectedPayment !== 'yesUsed'">نعم، لدي بطاقة خصم / ائتمان (أو باي بال) و استخدمها بالفعل</span>
+                </label>
+                <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                       [style.background-color]="selectedPayment === 'yesNotUsed' ? '#054e6d' : 'white'">
+                  <input type="radio" name="payment" value="yesNotUsed" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onPaymentChange('yesNotUsed')">
+                  <span class="text-base" [class.text-white]="selectedPayment === 'yesNotUsed'" [class.text-gray-800]="selectedPayment !== 'yesNotUsed'">نعم، لدي بطاقة خصم / ائتمان (أو باي بال) لكنني لم أستخدمها من قبل</span>
+                </label>
+                <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                       [style.background-color]="selectedPayment === 'noButHelp' ? '#054e6d' : 'white'">
+                  <input type="radio" name="payment" value="noButHelp" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onPaymentChange('noButHelp')">
+                  <span class="text-base" [class.text-white]="selectedPayment === 'noButHelp'" [class.text-gray-800]="selectedPayment !== 'noButHelp'">لا، لا أملك بطاقة خصم / ائتمان (أو باي بال)، لكنني أعرف شخصا يمكنه مساعدتي في الشراء باستخدام بطاقته</span>
+                </label>
+                <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+                       [style.background-color]="selectedPayment === 'noNoHelp' ? '#054e6d' : 'white'">
+                  <input type="radio" name="payment" value="noNoHelp" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onPaymentChange('noNoHelp')">
+                  <span class="text-base" [class.text-white]="selectedPayment === 'noNoHelp'" [class.text-gray-800]="selectedPayment !== 'noNoHelp'">لا، لا أملك بطاقة خصم / ائتمان (أو باي بال) ولا أعرف أي شخص يمكنه مساعدتي في الشراء باستخدام بطاقته</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-8 pb-5">
+            <button type="button" (click)="onWhatsAppClick()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-200 shadow-lg flex items-center justify-center space-x-3 space-x-reverse mx-auto">
+              <!-- WhatsApp Icon -->
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+              </svg>
+              <span>متابعة معنا عبر الواتساب</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-4">
+    <div class="max-w-4xl mx-auto text-center space-y-8">
+      <!-- Company Logo -->
+      <div class="w-[120px] max-w-1xl mx-auto flex justify-center">
+        <img src="assets/images/NevysLogo_Digital-02.png" alt="NEVY'S LANGUAGE" class="h-16 md:h-20">
+      </div>
+      
+      <!-- Address -->
+      <div>
+        <p class="text-black italic text-sm" style="font-family: sans-serif;">192 Spadina Ave, Toronto, ON M5T 2C2</p>
+      </div>
+      
+      <!-- Social Media Links -->
+      <div class="space-y-3 pt-4 mb-7">
+        <a href="https://www.facebook.com/nevyslanguage" target="_blank" class="block underline hover:opacity-80 transition duration-200" style="color: #054e6d;">
+          Nevy's Facebook (+11k👥)
+        </a>
+        <a href="https://www.instagram.com/nevyslanguage" target="_blank" class="block underline hover:opacity-80 transition duration-200" style="color: #054e6d;">
+          Nevy's Instagram (+3k👥)
+        </a>
+        <a href="https://www.tiktok.com/@nevyslanguage" target="_blank" class="block underline hover:opacity-80 transition duration-200" style="color: #054e6d;">
+          Nevy's TikTok (+1k👥)
+        </a>
+        <a href="https://www.youtube.com/channel/UCGoqDFH5knTxup_HsXvIVZA" target="_blank" class="block underline hover:opacity-80 transition duration-200" style="color: #054e6d;">
+          Nevy's YouTube (+100👥)
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Image Modal -->
+  <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" (click)="closeModal()">
+    <div class="relative max-w-4xl max-h-full" (click)="$event.stopPropagation()">
+      <!-- Close Button -->
+      <button (click)="closeModal()" class="absolute top-4 right-4 z-10 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      
+      <!-- Zoom Controls -->
+      <div class="absolute top-4 left-4 z-10 flex space-x-2">
+        <button (click)="zoomIn()" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200">
+          <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </button>
+        <button (click)="zoomOut()" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200">
+          <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"></path>
+          </svg>
+        </button>
+        <button (click)="resetZoom()" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200">
+          <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Modal Image Container -->
+      <div class="overflow-hidden rounded-lg shadow-2xl" 
+           [style.width]="'100%'"
+           [style.height]="'80vh'"
+           (wheel)="onWheel($event)"
+           (mousedown)="onMouseDown($event)"
+           (mousemove)="onMouseMove($event)"
+           (mouseup)="onMouseUp($event)"
+           (mouseleave)="onMouseUp($event)">
+        <img [src]="modalImageSrc" 
+             [style.transform]="'scale(' + zoomLevel + ') translate(' + panX + 'px, ' + panY + 'px)'"
+             [style.transform-origin]="'center center'"
+             [style.cursor]="isDragging ? 'grabbing' : (zoomLevel > 1 ? 'grab' : 'zoom-in')"
+             class="w-full h-full object-contain transition-transform duration-200"
+             (click)="onImageClick($event)"
+             alt="Modal Image">
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing Plans Popup -->
+  <div *ngIf="showPricingPopup" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" (click)="closePricingPopup()">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-2xl font-bold text-gray-800 text-center">أي الخطط تناسبك أكثر؟</h3>
+        <p class="text-gray-600 text-center mt-2">اختر الخطة التي تفضلها</p>
+      </div>
+      
+      <!-- Plan Options -->
+      <div class="p-6 space-y-4">
+        <button (click)="onPlanSelect('individual')" 
+                class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
+          <div class="font-semibold text-gray-800">دروس فردية</div>
+          <div class="text-sm text-gray-600">درس واحد مع مدرس خاص</div>
+        </button>
+        
+        <button (click)="onPlanSelect('group')" 
+                class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
+          <div class="font-semibold text-gray-800">دروس جماعية</div>
+          <div class="text-sm text-gray-600">دروس مع مجموعة صغيرة</div>
+        </button>
+        
+        <button (click)="onPlanSelect('intensive')" 
+                class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
+          <div class="font-semibold text-gray-800">برنامج مكثف</div>
+          <div class="text-sm text-gray-600">تعلم سريع ومكثف</div>
+        </button>
+        
+        <button (click)="onPlanSelect('not-sure')" 
+                class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
+          <div class="font-semibold text-gray-800">لست متأكداً</div>
+          <div class="text-sm text-gray-600">أحتاج مساعدة في الاختيار</div>
+        </button>
+      </div>
+      
+      <!-- Close Button -->
+      <div class="p-6 border-t border-gray-200 text-center">
+        <button (click)="closePricingPopup()" 
+                class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+          إغلاق
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
