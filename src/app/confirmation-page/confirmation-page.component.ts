@@ -13,7 +13,6 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   selectedChoice: string = '';
   currentSlide: number = 0;
   slides = [0, 1, 2, 3]; // Four review images
-  private autoPlayInterval: any;
   
   // Form selections
   selectedCancellationReasons: string[] = [];
@@ -37,7 +36,6 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   private pricingStartTime: number = 0;
   private hasShownPricingPopup: boolean = false;
   private pricingSectionVisible: boolean = false;
-  private carouselVisible: boolean = false;
   
   // Plan selection data
   selectedPlan: string = '';
@@ -49,18 +47,43 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     pageUrl: ''
   };
 
+  // Verification page
+  showVerificationPage: boolean = false;
+  userSelections: any = {
+    choice: '',
+    cancellationReasons: [],
+    subscription: '',
+    startTime: '',
+    payment: '',
+    name: ''
+  };
+
+  // Validation properties
+  showValidationError: boolean = false;
+  validationMessage: string = '';
+  nameError: boolean = false;
+  nameErrorMessage: string = '';
+
   onChoiceChange(choice: string) {
     this.selectedChoice = choice;
   }
 
   onWhatsAppClick() {
     if (this.selectedChoice) {
-      const message = this.selectedChoice === 'cancel' 
-        ? 'أريد إلغاء موعدي' 
-        : 'أريد تأكيد اهتمامي بدورات اللغة الإنجليزية';
+      // Collect all user selections
+      this.userSelections = {
+        choice: this.selectedChoice,
+        cancellationReasons: this.selectedCancellationReasons,
+        subscription: this.selectedSubscription,
+        startTime: this.selectedStartTime,
+        payment: this.selectedPayment,
+        name: '' // Will be filled in verification page
+      };
       
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      // Show verification page
+      this.showVerificationPage = true;
+      // Prevent body scroll when verification page is open
+      document.body.style.overflow = 'hidden';
     } else {
       alert('يرجى اختيار أحد الخيارات أولاً');
     }
@@ -68,58 +91,36 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   nextSlide() {
     this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-    console.log('Next slide:', this.currentSlide);
+    console.log('Next slide:', this.currentSlide, 'Total slides:', this.slides.length);
   }
 
   previousSlide() {
     this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
-    console.log('Previous slide:', this.currentSlide);
+    console.log('Previous slide:', this.currentSlide, 'Total slides:', this.slides.length);
   }
 
   goToSlide(index: number) {
     this.currentSlide = index;
-    console.log('Go to slide:', this.currentSlide);
+    console.log('Go to slide:', this.currentSlide, 'Total slides:', this.slides.length);
   }
 
   ngOnInit() {
-    this.startAutoPlay();
     this.setupIntersectionObservers();
   }
 
   ngOnDestroy() {
-    this.stopAutoPlay();
-  }
-
-  startAutoPlay() {
-    this.autoPlayInterval = setInterval(() => {
-      if (this.carouselVisible) {
-        this.nextSlide();
-      }
-    }, 3000); // Change slide every 3 seconds
-  }
-
-  stopAutoPlay() {
-    if (this.autoPlayInterval) {
-      clearInterval(this.autoPlayInterval);
-    }
-  }
-
-  // Pause auto-play when user interacts
-  onSlideInteraction() {
-    this.stopAutoPlay();
-    // Restart auto-play after 5 seconds of inactivity
-    setTimeout(() => {
-      this.startAutoPlay();
-    }, 5000);
+    // No auto-play to stop
   }
 
   onImageError(event: any) {
     console.error('Image failed to load:', event.target.src);
+    console.error('Error details:', event);
     // You can add fallback image logic here if needed
   }
 
   onImageLoad(event: any) {
     console.log('Image loaded successfully:', event.target.src);
+    console.log('Image dimensions:', event.target.naturalWidth, 'x', event.target.naturalHeight);
   }
 
   // Checkbox handling
@@ -258,23 +259,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       });
     }, { threshold: 0.5 });
 
-    // Carousel observer
-    const carouselObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        this.carouselVisible = entry.isIntersecting;
-      });
-    }, { threshold: 0.5 });
-
     // Observe elements after view init
     setTimeout(() => {
       const pricingSection = document.querySelector('#pricing-section');
-      const carouselSection = document.querySelector('#carousel-section');
       
       if (pricingSection) {
         pricingObserver.observe(pricingSection);
-      }
-      if (carouselSection) {
-        carouselObserver.observe(carouselSection);
       }
     }, 100);
   }
@@ -349,5 +339,124 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // this.crmService.trackPlanSelection(data);
     
     console.log('Data ready to be sent:', data);
+  }
+
+  // Verification page methods
+  closeVerificationPage() {
+    this.showVerificationPage = false;
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+  }
+
+  onNameChange(name: string) {
+    this.userSelections.name = name;
+  }
+
+  proceedToWhatsApp() {
+    if (!this.userSelections.name.trim()) {
+      this.showValidationErrorModal('يرجى إدخال اسمك أولاً');
+      return;
+    }
+
+    if (this.userSelections.name.trim().length < 2) {
+      this.showValidationErrorModal('الاسم يجب أن يكون على الأقل حرفين');
+      return;
+    }
+
+    // Generate personalized message based on selections
+    let message = `مرحباً، أنا ${this.userSelections.name}\n\n`;
+    
+    if (this.userSelections.choice === 'cancel') {
+      message += 'أريد إلغاء موعدي.\n';
+      if (this.userSelections.cancellationReasons.length > 0) {
+        message += 'أسباب الإلغاء:\n';
+        this.userSelections.cancellationReasons.forEach((reason: string) => {
+          message += `- ${this.getCancellationReasonText(reason)}\n`;
+        });
+      }
+      if (this.userSelections.subscription) {
+        message += `\nالاشتراك في الرسائل: ${this.userSelections.subscription === 'yes' ? 'نعم' : 'لا'}`;
+      }
+    } else {
+      message += 'أريد تأكيد اهتمامي بدورات اللغة الإنجليزية.\n';
+      if (this.userSelections.startTime) {
+        message += `متى أريد البدء: ${this.getStartTimeText(this.userSelections.startTime)}\n`;
+      }
+      if (this.userSelections.payment) {
+        message += `حالة الدفع: ${this.getPaymentText(this.userSelections.payment)}`;
+      }
+    }
+
+    // Hala's WhatsApp number: +1 (647) 365-4860
+    const halaNumber = '16473654860'; // Remove spaces and special characters
+    const whatsappUrl = `https://wa.me/${halaNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Close verification page and open WhatsApp
+    this.closeVerificationPage();
+    window.open(whatsappUrl, '_blank');
+  }
+
+  getCancellationReasonText(reason: string): string {
+    const reasons: { [key: string]: string } = {
+      'price': 'السعر مرتفع جداً',
+      'timing': 'الجداول الزمنية غير مناسبة',
+      'schedule': 'جدول أعمالي لا يسمح',
+      'payment': 'شكوك بشأن أمان الدفع',
+      'prefer-inperson': 'أفضل الدروس الحضورية',
+      'other': 'سبب آخر'
+    };
+    return reasons[reason] || reason;
+  }
+
+  getStartTimeText(startTime: string): string {
+    const times: { [key: string]: string } = {
+      'now': 'الآن',
+      'nextWeek': 'الأسبوع القادم',
+      'nextMonth': 'الشهر القادم',
+      'comingMonths': 'خلال الأشهر القادمة'
+    };
+    return times[startTime] || startTime;
+  }
+
+  getPaymentText(payment: string): string {
+    const payments: { [key: string]: string } = {
+      'yesUsed': 'أستطيع الوصول إلى طرق الدفع',
+      'noNoHelp': 'لا أستطيع الوصول إلى طرق الدفع'
+    };
+    return payments[payment] || payment;
+  }
+
+  // Validation methods
+  showValidationErrorModal(message: string) {
+    this.validationMessage = message;
+    this.showValidationError = true;
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeValidationError() {
+    this.showValidationError = false;
+    this.validationMessage = '';
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+  }
+
+  validateName() {
+    const name = this.userSelections.name?.trim() || '';
+    if (!name) {
+      this.nameError = true;
+      this.nameErrorMessage = 'الاسم مطلوب';
+    } else if (name.length < 2) {
+      this.nameError = true;
+      this.nameErrorMessage = 'الاسم يجب أن يكون على الأقل حرفين';
+    } else {
+      this.nameError = false;
+      this.nameErrorMessage = '';
+    }
+  }
+
+  clearNameError() {
+    this.nameError = false;
+    this.nameErrorMessage = '';
   }
 }
