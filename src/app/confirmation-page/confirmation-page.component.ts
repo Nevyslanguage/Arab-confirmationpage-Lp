@@ -64,13 +64,22 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   nameError: boolean = false;
   nameErrorMessage: string = '';
 
+  // Thanks modal
+  showThanksModal: boolean = false;
+
   onChoiceChange(choice: string) {
     this.selectedChoice = choice;
   }
 
   onWhatsAppClick() {
     if (this.selectedChoice) {
-      // Collect all user selections
+      // If user cancels, show thanks message directly
+      if (this.selectedChoice === 'cancel') {
+        this.showThanksMessage();
+        return;
+      }
+      
+      // For confirmations, collect all user selections and show verification page
       this.userSelections = {
         choice: this.selectedChoice,
         cancellationReasons: this.selectedCancellationReasons,
@@ -363,28 +372,37 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Handle cancellation - show thanks message instead of WhatsApp
+    if (this.userSelections.choice === 'cancel') {
+      this.closeVerificationPage();
+      this.showThanksMessage();
+      return;
+    }
+
+    // Handle confirmation - check payment method
+    if (this.userSelections.choice === 'confirm') {
+      // Only go to WhatsApp if user has payment method
+      if (this.userSelections.payment === 'yesUsed') {
+        this.goToWhatsApp();
+      } else {
+        // Show thanks message if no payment method
+        this.closeVerificationPage();
+        this.showThanksMessage();
+        return;
+      }
+    }
+  }
+
+  private goToWhatsApp() {
     // Generate personalized message based on selections
     let message = `مرحباً، أنا ${this.userSelections.name}\n\n`;
     
-    if (this.userSelections.choice === 'cancel') {
-      message += 'أريد إلغاء موعدي.\n';
-      if (this.userSelections.cancellationReasons.length > 0) {
-        message += 'أسباب الإلغاء:\n';
-        this.userSelections.cancellationReasons.forEach((reason: string) => {
-          message += `- ${this.getCancellationReasonText(reason)}\n`;
-        });
-      }
-      if (this.userSelections.subscription) {
-        message += `\nالاشتراك في الرسائل: ${this.userSelections.subscription === 'yes' ? 'نعم' : 'لا'}`;
-      }
-    } else {
-      message += 'أريد تأكيد اهتمامي بدورات اللغة الإنجليزية.\n';
-      if (this.userSelections.startTime) {
-        message += `متى أريد البدء: ${this.getStartTimeText(this.userSelections.startTime)}\n`;
-      }
-      if (this.userSelections.payment) {
-        message += `حالة الدفع: ${this.getPaymentText(this.userSelections.payment)}`;
-      }
+    message += 'أريد تأكيد اهتمامي بدورات اللغة الإنجليزية.\n';
+    if (this.userSelections.startTime) {
+      message += `متى أريد البدء: ${this.getStartTimeText(this.userSelections.startTime)}\n`;
+    }
+    if (this.userSelections.payment) {
+      message += `حالة الدفع: ${this.getPaymentText(this.userSelections.payment)}`;
     }
 
     // Hala's WhatsApp number: +1 (647) 365-4860
@@ -394,6 +412,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Close verification page and open WhatsApp
     this.closeVerificationPage();
     window.open(whatsappUrl, '_blank');
+  }
+
+  private showThanksMessage() {
+    // Show thanks message modal
+    this.showThanksModal = true;
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
   }
 
   getCancellationReasonText(reason: string): string {
@@ -458,5 +483,11 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   clearNameError() {
     this.nameError = false;
     this.nameErrorMessage = '';
+  }
+
+  closeThanksModal() {
+    this.showThanksModal = false;
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
   }
 }
