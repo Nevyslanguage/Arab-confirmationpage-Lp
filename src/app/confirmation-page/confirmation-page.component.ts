@@ -50,7 +50,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     total: 0,
     lastActivity: 0,
     isIdle: false,
-    idleThreshold: 5000 // 5 seconds
+    idleThreshold: 30000 // 30 seconds - more reasonable for reading
   };
   private idleTimer: any = null;
   
@@ -124,12 +124,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       const totalTimeInSeconds = this.totalPricingTime / 1000;
       console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
       
-      if (totalTimeInSeconds < 5) {
-        // Show validation dialog asking if they checked prices
-        this.showPricingTimeValidation = true;
-        document.body.style.overflow = 'hidden';
-        return;
-      }
+      // if (totalTimeInSeconds < 5) {
+      //   // Show validation dialog asking if they checked prices
+      //   this.showPricingTimeValidation = true;
+      //   document.body.style.overflow = 'hidden';
+      //   return;
+      // }
       
       // If user cancels, show thanks message directly
       if (this.selectedChoice === 'cancel') {
@@ -308,6 +308,33 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
         this.resetIdleTimer();
       }, true);
     });
+    
+    // Also track when user is actively viewing sections (reading content)
+    // This helps distinguish between reading and actual idle time
+    this.setupReadingActivityTracking();
+  }
+
+  private setupReadingActivityTracking() {
+    // Track when user is actively viewing sections
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // User is actively viewing a section - consider this as activity
+          this.resetIdleTimer();
+          console.log('👀 User actively viewing section:', entry.target.id);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    // Observe all sections for reading activity
+    setTimeout(() => {
+      Object.keys(this.sectionEvents).forEach(sectionId => {
+        const element = document.querySelector(sectionId);
+        if (element) {
+          sectionObserver.observe(element);
+        }
+      });
+    }, 100);
   }
 
   private resetIdleTimer() {
@@ -332,7 +359,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Set new idle timer
     this.idleTimer = setTimeout(() => {
       this.idleTime.isIdle = true;
-      console.log('😴 User is now idle');
+      console.log('😴 User is now idle (no activity for 30+ seconds)');
     }, this.idleTime.idleThreshold);
   }
 
@@ -665,14 +692,10 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   proceedToWhatsApp() {
-    if (!this.userSelections.name.trim()) {
-      this.showValidationErrorModal('يرجى إدخال اسمك أولاً');
-      return;
-    }
-
-    if (this.userSelections.name.trim().length < 2) {
-      this.showValidationErrorModal('الاسم يجب أن يكون على الأقل حرفين');
-      return;
+    // Name is automatically filled from URL parameters, so we don't need to validate it
+    // If no name from URL, use a default
+    if (!this.userSelections.name || !this.userSelections.name.trim()) {
+      this.userSelections.name = 'عميل';
     }
 
     // Handle cancellation - show thanks message instead of WhatsApp
@@ -833,7 +856,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       subscription: this.selectedSubscription,
       startTime: this.selectedStartTime,
       payment: this.selectedPayment,
-      name: '' // Will be filled in verification page
+      name: this.urlParams.name || '' // Use name from URL parameters
     };
     
     // Show verification page

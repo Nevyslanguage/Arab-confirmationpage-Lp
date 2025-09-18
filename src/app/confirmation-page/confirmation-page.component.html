@@ -607,14 +607,13 @@
         <!-- Header -->
         <div class="p-6 border-b border-gray-200">
           <h3 class="text-2xl font-bold text-gray-800 text-center">تأكيد اختياراتك</h3>
-          <p class="text-gray-600 text-center mt-2">يرجى مراجعة اختياراتك وإدخال اسمك</p>
+          <p class="text-gray-600 text-center mt-2">يرجى مراجعة اختياراتك</p>
         </div>
         
         <!-- Content -->
         <div class="p-6 space-y-6">
-          <!-- Name Input -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">اسمك *</label>
+          <!-- Name Input - Hidden, automatically filled from URL -->
+          <div style="display: none;">
             <input type="text" 
                    [(ngModel)]="userSelections.name"
                    [class.border-red-500]="nameError"
@@ -623,12 +622,6 @@
                    placeholder="أدخل اسمك هنا"
                    (blur)="validateName()"
                    (input)="clearNameError()">
-            <div *ngIf="nameError" class="mt-2 text-sm text-red-600 flex items-center">
-              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-              </svg>
-              {{ nameErrorMessage }}
-            </div>
           </div>
 
         <!-- Selected Choice -->
