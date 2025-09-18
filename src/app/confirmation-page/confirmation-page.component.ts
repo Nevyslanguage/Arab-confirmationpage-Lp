@@ -42,6 +42,42 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   // Pricing time validation dialog
   showPricingTimeValidation: boolean = false;
   
+  // User tracking system
+  private sessionId: string = '';
+  private sessionStartTime: number = 0;
+  private sectionTimers: { [key: string]: { totalTime: number; isActive: boolean; currentSessionStart?: number } } = {};
+  private idleTime: { total: number; lastActivity: number; isIdle: boolean; idleThreshold: number } = {
+    total: 0,
+    lastActivity: 0,
+    isIdle: false,
+    idleThreshold: 5000 // 5 seconds
+  };
+  private idleTimer: any = null;
+  
+  // Form interaction tracking
+  private formStarted: boolean = false;
+  
+  // URL parameters from leadform
+  private urlParams: {
+    email?: string;
+    name?: string;
+    campaignName?: string;
+    adsetName?: string;
+    adName?: string;
+    fbClickId?: string;
+  } = {};
+  
+  // Section to event mapping
+  private sectionEvents: { [key: string]: string } = {
+    '#pricing-section': 'session_duration_on_price_section',
+    '#levels-section': 'session_duration_on_levels_section',
+    '#teachers-section': 'session_duration_on_teachers_section',
+    '#platform-section': 'session_duration_on_platform_section',
+    '#consultants-section': 'session_duration_on_advisors_section',
+    '#carousel-section': 'session_duration_on_testimonials_section',
+    '#form-section': 'session_duration_on_form_section'
+  };
+  
   // Plan selection data
   selectedPlan: string = '';
   planSelectionData: any = {
@@ -74,6 +110,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   onChoiceChange(choice: string) {
     this.selectedChoice = choice;
+    
+    // Track when user starts filling the form
+    if (!this.formStarted) {
+      this.formStarted = true;
+      console.log('📝 Form started - User selected:', choice);
+    }
   }
 
   onWhatsAppClick() {
@@ -130,11 +172,265 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.extractUrlParameters();
+    this.initializeTracking();
     this.setupIntersectionObservers();
+    this.setupIdleTracking();
+    this.setupPageUnloadTracking();
   }
 
   ngOnDestroy() {
-    // No auto-play to stop
+    // Send tracking data before component is destroyed
+    this.sendTrackingData('component_destroy');
+  }
+
+  // ===== TRACKING SYSTEM METHODS =====
+
+  private extractUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    this.urlParams = {
+      email: urlParams.get('email') || undefined,
+      name: urlParams.get('name') || undefined,
+      campaignName: urlParams.get('Campaign_name') || undefined,
+      adsetName: urlParams.get('Adset_name') || undefined,
+      adName: urlParams.get('Ad_name') || undefined,
+      fbClickId: urlParams.get('fbclid') || undefined
+    };
+    
+    console.log('🔗 URL Parameters extracted:', {
+      urlParams: this.urlParams,
+      fullUrl: window.location.href,
+      searchParams: window.location.search
+    });
+  }
+
+  private initializeTracking() {
+    this.sessionId = this.generateSessionId();
+    this.sessionStartTime = Date.now();
+    this.idleTime.lastActivity = Date.now();
+    
+    // Initialize section timers
+    Object.keys(this.sectionEvents).forEach(sectionId => {
+      this.sectionTimers[sectionId] = {
+        totalTime: 0,
+        isActive: false
+      };
+    });
+    
+    console.log('🎯 Tracking initialized:', {
+      sessionId: this.sessionId,
+      startTime: new Date(this.sessionStartTime)
+    });
+  }
+
+  private generateSessionId(): string {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  private setupIntersectionObservers() {
+    // Create intersection observer for section tracking
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const sectionId = '#' + entry.target.id;
+        
+        if (entry.isIntersecting) {
+          this.startSectionTimer(sectionId);
+        } else {
+          this.stopSectionTimer(sectionId);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    // Observe all sections after view init
+    setTimeout(() => {
+      Object.keys(this.sectionEvents).forEach(sectionId => {
+        const element = document.querySelector(sectionId);
+        if (element) {
+          sectionObserver.observe(element);
+          console.log('👀 Observing section:', sectionId);
+        } else {
+          console.warn('⚠️ Section not found:', sectionId);
+        }
+      });
+    }, 100);
+
+    // Keep existing pricing section observer
+    this.setupExistingPricingObserver();
+  }
+
+  private setupExistingPricingObserver() {
+    // Keep the existing pricing section observer for the popup
+    const pricingObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        this.pricingSectionVisible = entry.isIntersecting;
+        if (entry.isIntersecting && !this.hasShownPricingPopup) {
+          this.startPricingTimer();
+        } else if (!entry.isIntersecting) {
+          this.stopPricingTimer();
+        }
+      });
+    }, { threshold: 0.5 });
+
+    setTimeout(() => {
+      const pricingSection = document.querySelector('#pricing-section');
+      if (pricingSection) {
+        pricingObserver.observe(pricingSection);
+      }
+    }, 100);
+  }
+
+  private startSectionTimer(sectionId: string) {
+    if (this.sectionTimers[sectionId] && !this.sectionTimers[sectionId].isActive) {
+      this.sectionTimers[sectionId].isActive = true;
+      this.sectionTimers[sectionId].currentSessionStart = Date.now();
+      console.log('⏱️ Started timer for:', sectionId);
+    }
+  }
+
+  private stopSectionTimer(sectionId: string) {
+    if (this.sectionTimers[sectionId] && this.sectionTimers[sectionId].isActive) {
+      const sessionTime = Date.now() - (this.sectionTimers[sectionId].currentSessionStart || 0);
+      this.sectionTimers[sectionId].totalTime += sessionTime;
+      this.sectionTimers[sectionId].isActive = false;
+      this.sectionTimers[sectionId].currentSessionStart = undefined;
+      
+      const eventName = this.sectionEvents[sectionId];
+      console.log('⏹️ Stopped timer for:', sectionId, 'Session time:', sessionTime, 'ms', 'Total:', this.sectionTimers[sectionId].totalTime, 'ms');
+    }
+  }
+
+  private setupIdleTracking() {
+    const activityEvents = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'click'];
+    
+    activityEvents.forEach(event => {
+      document.addEventListener(event, () => {
+        this.resetIdleTimer();
+      }, true);
+    });
+  }
+
+  private resetIdleTimer() {
+    const now = Date.now();
+    
+    // If user was idle, add the idle time to total
+    if (this.idleTime.isIdle) {
+      const idlePeriod = now - this.idleTime.lastActivity;
+      this.idleTime.total += idlePeriod;
+      console.log('🔄 User activity detected. Idle period:', idlePeriod, 'ms, Total idle:', this.idleTime.total, 'ms');
+    }
+    
+    // Reset idle state
+    this.idleTime.isIdle = false;
+    this.idleTime.lastActivity = now;
+    
+    // Clear existing timer
+    if (this.idleTimer) {
+      clearTimeout(this.idleTimer);
+    }
+    
+    // Set new idle timer
+    this.idleTimer = setTimeout(() => {
+      this.idleTime.isIdle = true;
+      console.log('😴 User is now idle');
+    }, this.idleTime.idleThreshold);
+  }
+
+  private setupPageUnloadTracking() {
+    window.addEventListener('beforeunload', () => {
+      this.sendTrackingData('page_unload');
+    });
+  }
+
+  private sendTrackingData(trigger: string) {
+    // Stop all active timers
+    Object.keys(this.sectionTimers).forEach(sectionId => {
+      if (this.sectionTimers[sectionId].isActive) {
+        this.stopSectionTimer(sectionId);
+      }
+    });
+
+    // Add any remaining idle time
+    if (this.idleTime.isIdle) {
+      const remainingIdle = Date.now() - this.idleTime.lastActivity;
+      this.idleTime.total += remainingIdle;
+    }
+
+    // Prepare events data (convert to seconds)
+    const events = {
+      session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
+      session_duration_on_levels_section: Math.round(this.sectionTimers['#levels-section']?.totalTime || 0) / 1000,
+      session_duration_on_teachers_section: Math.round(this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000,
+      session_duration_on_platform_section: Math.round(this.sectionTimers['#platform-section']?.totalTime || 0) / 1000,
+      session_duration_on_advisors_section: Math.round(this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000,
+      session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
+      session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
+      session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
+      form_started: this.formStarted
+    };
+
+    // Prepare Zapier webhook data
+    const zapierData = {
+      session_id: this.sessionId,
+      trigger: trigger,
+      timestamp: new Date().toISOString(),
+      total_session_time: Math.round((Date.now() - this.sessionStartTime) / 1000),
+      events: events,
+      user_agent: navigator.userAgent,
+      page_url: window.location.href,
+      // User data from URL parameters
+      user_name: this.urlParams.name,
+      user_email: this.urlParams.email
+    };
+
+    // Console logging for debugging
+    console.log('📊 TRACKING DATA SENT:', {
+      trigger: trigger,
+      sessionId: this.sessionId,
+      events: events,
+      zapierData: zapierData
+    });
+
+    // Send to Zapier webhook
+    this.sendToZapier(zapierData);
+    
+    // TODO: Send to Hotjar
+    // this.sendToHotjar(events);
+  }
+
+  private sendToZapier(data: any) {
+    // Replace this URL with your actual Zapier webhook URL
+    const zapierWebhookUrl = 'YOUR_ZAPIER_WEBHOOK_URL_HERE';
+    
+    if (zapierWebhookUrl === 'YOUR_ZAPIER_WEBHOOK_URL_HERE') {
+      console.log('⚠️ Please update the Zapier webhook URL in the code');
+      console.log('🔗 Would send to Zapier:', data);
+      return;
+    }
+    
+    // Send data to Zapier webhook
+    fetch(zapierWebhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('✅ Successfully sent to Zapier:', data);
+      } else {
+        console.error('❌ Failed to send to Zapier:', response.status, response.statusText);
+      }
+    })
+    .catch(error => {
+      console.error('❌ Error sending to Zapier:', error);
+    });
+  }
+
+  private sendToHotjar(events: any) {
+    // This will be implemented when Hotjar is set up
+    console.log('🔥 Would send to Hotjar:', events);
   }
 
   onImageError(event: any) {
@@ -270,29 +566,6 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Intersection Observer setup
-  setupIntersectionObservers() {
-    // Pricing section observer
-    const pricingObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        this.pricingSectionVisible = entry.isIntersecting;
-        if (entry.isIntersecting && !this.hasShownPricingPopup) {
-          this.startPricingTimer();
-        } else if (!entry.isIntersecting) {
-          this.stopPricingTimer();
-        }
-      });
-    }, { threshold: 0.5 });
-
-    // Observe elements after view init
-    setTimeout(() => {
-      const pricingSection = document.querySelector('#pricing-section');
-      
-      if (pricingSection) {
-        pricingObserver.observe(pricingSection);
-      }
-    }, 100);
-  }
 
   // Pricing section timer methods
   startPricingTimer() {
@@ -544,6 +817,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private continueWithFormSubmission() {
+    // Send tracking data when form submission starts
+    this.sendTrackingData('form_submission_start');
+    
     // If user cancels, show thanks message directly
     if (this.selectedChoice === 'cancel') {
       this.showThanksMessage();
