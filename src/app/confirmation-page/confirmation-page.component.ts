@@ -50,12 +50,14 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     total: 0,
     lastActivity: 0,
     isIdle: false,
-    idleThreshold: 30000 // 30 seconds - more reasonable for reading
+    idleThreshold: 90000 // 90 seconds - very reasonable for reading content
   };
   private idleTimer: any = null;
   
   // Form interaction tracking
   private formStarted: boolean = false;
+  private formSubmitted: boolean = false;
+  private formStartTime: number = 0;
   
   // URL parameters from leadform
   private urlParams: {
@@ -114,7 +116,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Track when user starts filling the form
     if (!this.formStarted) {
       this.formStarted = true;
-      console.log('📝 Form started - User selected:', choice);
+      this.formStartTime = Date.now();
+      console.log('📝 Form started - User selected:', choice, 'at:', new Date(this.formStartTime));
     }
   }
 
@@ -359,7 +362,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Set new idle timer
     this.idleTimer = setTimeout(() => {
       this.idleTime.isIdle = true;
-      console.log('😴 User is now idle (no activity for 30+ seconds)');
+      console.log('😴 User is now idle (no activity for 90+ seconds)');
     }, this.idleTime.idleThreshold);
   }
 
@@ -383,6 +386,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       this.idleTime.total += remainingIdle;
     }
 
+    // Calculate form interaction time for submitters
+    let formInteractionTime = 0;
+    if (this.formStarted && this.formStartTime > 0) {
+      formInteractionTime = Math.round((Date.now() - this.formStartTime) / 1000);
+    }
+
     // Prepare events data (convert to seconds)
     const events = {
       session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
@@ -393,7 +402,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
       session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
       session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
-      form_started: this.formStarted
+      form_started: this.formStarted,
+      form_submitted: this.formSubmitted,
+      form_interaction_time: formInteractionTime
     };
 
     // Prepare Zapier webhook data
@@ -840,6 +851,10 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private continueWithFormSubmission() {
+    // Mark form as submitted when user starts the submission process
+    this.formSubmitted = true;
+    console.log('✅ Form submitted - User completed the form');
+    
     // Send tracking data when form submission starts
     this.sendTrackingData('form_submission_start');
     
