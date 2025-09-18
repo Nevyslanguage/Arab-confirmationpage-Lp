@@ -713,4 +713,40 @@
       </div>
     </div>
   </div>
+
+  <!-- Pricing Time Validation Modal -->
+  <div *ngIf="showPricingTimeValidation" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" (click)="closePricingTimeValidation()">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center justify-center mb-4">
+          <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 text-center">تأكيد الأسعار</h3>
+      </div>
+      
+      <!-- Content -->
+      <div class="p-6">
+        <p class="text-gray-600 text-center mb-6">
+          هل تأكدت من مراجعة الأسعار والبرامج المتاحة؟ نريد التأكد من أنك اطلعت على جميع الخيارات قبل المتابعة.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="flex space-x-3 space-x-reverse">
+          <button (click)="goBackToCheckPrices()" 
+                  class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+            نعم، دعني أراجع الأسعار
+          </button>
+          <button (click)="proceedWithoutCheckingPrices()" 
+                  class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+            متابعة بدون مراجعة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

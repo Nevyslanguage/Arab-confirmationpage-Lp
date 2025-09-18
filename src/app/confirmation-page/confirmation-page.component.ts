@@ -34,8 +34,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   showPricingPopup: boolean = false;
   private pricingTimer: any;
   private pricingStartTime: number = 0;
+  private pricingEndTime: number = 0;
+  private totalPricingTime: number = 0;
   private hasShownPricingPopup: boolean = false;
   private pricingSectionVisible: boolean = false;
+  
+  // Pricing time validation dialog
+  showPricingTimeValidation: boolean = false;
   
   // Plan selection data
   selectedPlan: string = '';
@@ -73,6 +78,17 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   onWhatsAppClick() {
     if (this.selectedChoice) {
+      // Check if user spent enough time on pricing section (5 seconds = 5000ms)
+      const totalTimeInSeconds = this.totalPricingTime / 1000;
+      console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
+      
+      if (totalTimeInSeconds < 5) {
+        // Show validation dialog asking if they checked prices
+        this.showPricingTimeValidation = true;
+        document.body.style.overflow = 'hidden';
+        return;
+      }
+      
       // If user cancels, show thanks message directly
       if (this.selectedChoice === 'cancel') {
         this.showThanksMessage();
@@ -280,8 +296,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   // Pricing section timer methods
   startPricingTimer() {
-    if (!this.hasShownPricingPopup && this.pricingSectionVisible) {
+    if (this.pricingSectionVisible && this.pricingStartTime === 0) {
       this.pricingStartTime = Date.now();
+      console.log('Started pricing timer at:', new Date(this.pricingStartTime));
+    }
+    
+    // Keep the original popup logic
+    if (!this.hasShownPricingPopup && this.pricingSectionVisible) {
       this.pricingTimer = setTimeout(() => {
         if (this.pricingSectionVisible && !this.hasShownPricingPopup) {
           this.showPricingPopup = true;
@@ -294,6 +315,15 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   stopPricingTimer() {
+    if (this.pricingStartTime > 0) {
+      this.pricingEndTime = Date.now();
+      const sessionTime = this.pricingEndTime - this.pricingStartTime;
+      this.totalPricingTime += sessionTime;
+      console.log('Stopped pricing timer. Session time:', sessionTime, 'ms. Total time:', this.totalPricingTime, 'ms');
+      this.pricingStartTime = 0; // Reset for next session
+    }
+    
+    // Keep the original timer clearing logic
     if (this.pricingTimer) {
       clearTimeout(this.pricingTimer);
       this.pricingTimer = null;
@@ -489,5 +519,50 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     this.showThanksModal = false;
     // Restore body scroll
     document.body.style.overflow = 'auto';
+  }
+
+  // Pricing time validation methods
+  closePricingTimeValidation() {
+    this.showPricingTimeValidation = false;
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+  }
+
+  proceedWithoutCheckingPrices() {
+    this.closePricingTimeValidation();
+    // Continue with the original form submission logic
+    this.continueWithFormSubmission();
+  }
+
+  goBackToCheckPrices() {
+    this.closePricingTimeValidation();
+    // Scroll to pricing section
+    const pricingSection = document.querySelector('#pricing-section');
+    if (pricingSection) {
+      pricingSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  private continueWithFormSubmission() {
+    // If user cancels, show thanks message directly
+    if (this.selectedChoice === 'cancel') {
+      this.showThanksMessage();
+      return;
+    }
+    
+    // For confirmations, collect all user selections and show verification page
+    this.userSelections = {
+      choice: this.selectedChoice,
+      cancellationReasons: this.selectedCancellationReasons,
+      subscription: this.selectedSubscription,
+      startTime: this.selectedStartTime,
+      payment: this.selectedPayment,
+      name: '' // Will be filled in verification page
+    };
+    
+    // Show verification page
+    this.showVerificationPage = true;
+    // Prevent body scroll when verification page is open
+    document.body.style.overflow = 'hidden';
   }
 }
