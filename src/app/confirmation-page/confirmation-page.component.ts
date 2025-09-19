@@ -703,10 +703,17 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   proceedToWhatsApp() {
+    // Debug: Log name before processing
+    console.log('🔍 proceedToWhatsApp name debug:', {
+      urlParamsName: this.urlParams.name,
+      userSelectionsName: this.userSelections.name
+    });
+    
     // Name is automatically filled from URL parameters, so we don't need to validate it
     // If no name from URL, use a default
     if (!this.userSelections.name || !this.userSelections.name.trim()) {
-      this.userSelections.name = 'عميل';
+      this.userSelections.name = this.urlParams.name || 'عميل';
+      console.log('🔧 Name fallback applied:', this.userSelections.name);
     }
 
     // Handle cancellation - show thanks message instead of WhatsApp
@@ -731,8 +738,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private goToWhatsApp() {
+    // Use name directly from URL parameters
+    const nameFromUrl = this.urlParams.name || 'عميل';
+    
+    console.log('🔍 WhatsApp name from URL:', nameFromUrl);
+    
     // Generate personalized message based on selections
-    let message = `مرحباً، أنا ${this.userSelections.name}\n\n`;
+    let message = `مرحباً، أنا ${nameFromUrl}\n\n`;
     
     message += 'أريد تأكيد اهتمامي بدورات اللغة الإنجليزية.\n';
     if (this.userSelections.startTime) {
