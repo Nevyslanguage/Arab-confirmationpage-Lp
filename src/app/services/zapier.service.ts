@@ -34,7 +34,7 @@ export interface FormData {
 })
 export class ZapierService {
   // Your actual Zapier webhook URL - UPDATE THIS WITH YOUR NEW WEBHOOK URL
-  private readonly ZAPIER_WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/4630879/YOUR_NEW_WEBHOOK_ID/';
+  private readonly ZAPIER_WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/4630879/umnnybh/';
 
   constructor(private http: HttpClient) {}
 
