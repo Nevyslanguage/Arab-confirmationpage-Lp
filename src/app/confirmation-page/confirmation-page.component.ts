@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ZapierService, FormData } from '../services/zapier.service';
 
 @Component({
   selector: 'app-confirmation-page',
@@ -10,6 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './confirmation-page.component.css'
 })
 export class ConfirmationPageComponent implements OnInit, OnDestroy {
+  constructor(private zapierService: ZapierService) {}
   selectedChoice: string = '';
   currentSlide: number = 0;
   slides = [0, 1, 2, 3]; // Four review images
@@ -456,6 +458,70 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // this.sendToHotjar(events);
   }
 
+  // New method using the successful Zapier service pattern
+  private async sendFormDataToZapier() {
+    try {
+      // Calculate form interaction time
+      let formInteractionTime = 0;
+      if (this.formStarted && this.formStartTime > 0) {
+        formInteractionTime = Math.round((Date.now() - this.formStartTime) / 1000);
+      }
+
+      // Prepare events data (convert to seconds)
+      const events = {
+        session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
+        session_duration_on_levels_section: Math.round(this.sectionTimers['#levels-section']?.totalTime || 0) / 1000,
+        session_duration_on_teachers_section: Math.round(this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000,
+        session_duration_on_platform_section: Math.round(this.sectionTimers['#platform-section']?.totalTime || 0) / 1000,
+        session_duration_on_advisors_section: Math.round(this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000,
+        session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
+        session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
+        session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
+        form_started: this.formStarted,
+        form_submitted: this.formSubmitted,
+        form_interaction_time: formInteractionTime
+      };
+
+      // Prepare form data in the successful format with analytics
+      const formData: FormData = {
+        selectedResponse: this.selectedChoice,
+        cancelReasons: this.selectedCancellationReasons,
+        marketingConsent: this.selectedSubscription,
+        englishImpact: 'Not Applicable', // This form doesn't have English impact question
+        preferredStartTime: this.selectedStartTime,
+        paymentReadiness: this.selectedPayment,
+        pricingResponse: this.selectedPlan || 'Not Selected',
+        name: this.urlParams.name,
+        email: this.urlParams.email,
+        campaignName: this.urlParams.campaignName,
+        adsetName: this.urlParams.adsetName,
+        adName: this.urlParams.adName,
+        fbClickId: this.urlParams.fbClickId,
+        // Analytics data
+        sessionId: this.sessionId,
+        trigger: 'form_submission',
+        timestamp: new Date().toISOString(),
+        totalSessionTime: Math.round((Date.now() - this.sessionStartTime) / 1000),
+        events: events,
+        userAgent: navigator.userAgent,
+        pageUrl: window.location.href,
+        formStarted: this.formStarted,
+        formSubmitted: this.formSubmitted,
+        formInteractionTime: formInteractionTime
+      };
+
+      console.log('📤 Sending form data with analytics to Zapier:', formData);
+      
+      // Send using the new service
+      const response = await this.zapierService.sendToZapier(formData);
+      console.log('✅ Successfully sent to Zapier:', response);
+      
+    } catch (error) {
+      console.error('❌ Error sending to Zapier:', error);
+    }
+  }
+
+  // Keep the old method for backward compatibility with tracking data
   private sendToZapier(data: any) {
     // Replace this URL with your actual Zapier webhook URL
     // const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umn6x4s/';
@@ -804,7 +870,10 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       console.log('🔧 Name fallback applied:', this.userSelections.name);
     }
 
-    // Send analytics data for final action
+    // Send form data using the new successful Zapier service
+    this.sendFormDataToZapier();
+
+    // Send analytics data for final action (keep existing tracking)
     this.sendLeadUpdateToZapier();
 
     // Handle cancellation - show thanks message instead of WhatsApp
@@ -855,6 +924,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private showThanksMessage() {
+    // Send form data using the new successful Zapier service
+    this.sendFormDataToZapier();
+    
     // Send analytics data for cancellation/thanks action
     this.sendLeadUpdateToZapier();
     
