@@ -458,7 +458,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   private sendToZapier(data: any) {
     // Replace this URL with your actual Zapier webhook URL
-    const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umn6x4s/';
+    // const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umn6x4s/';
+    const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umnemeo/';
     
     // Webhook URL is configured, proceed with sending data
     
@@ -475,9 +476,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       if (response.ok) {
         console.log('✅ Successfully sent to Zapier:', data);
         console.log('📊 Data sent as JSON:', JSON.stringify(data, null, 2));
+        console.log('🔗 Webhook URL used:', zapierWebhookUrl);
+        console.log('📋 Response status:', response.status);
+        console.log('📋 Response headers:', response.headers);
       } else {
         console.error('❌ Failed to send to Zapier:', response.status, response.statusText);
         console.log('📊 Attempted to send:', JSON.stringify(data, null, 2));
+        console.log('🔗 Webhook URL used:', zapierWebhookUrl);
       }
     })
     .catch(error => {
