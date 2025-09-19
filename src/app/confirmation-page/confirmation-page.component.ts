@@ -462,23 +462,27 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     
     // Webhook URL is configured, proceed with sending data
     
-    // Send data to Zapier webhook
+    // Send data to Zapier webhook as JSON
     fetch(zapierWebhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(data)
     })
     .then(response => {
       if (response.ok) {
         console.log('✅ Successfully sent to Zapier:', data);
+        console.log('📊 Data sent as JSON:', JSON.stringify(data, null, 2));
       } else {
         console.error('❌ Failed to send to Zapier:', response.status, response.statusText);
+        console.log('📊 Attempted to send:', JSON.stringify(data, null, 2));
       }
     })
     .catch(error => {
       console.error('❌ Error sending to Zapier:', error);
+      console.log('📊 Data that failed to send:', JSON.stringify(data, null, 2));
     });
   }
 
@@ -795,6 +799,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       console.log('🔧 Name fallback applied:', this.userSelections.name);
     }
 
+    // Send analytics data for final action
+    this.sendLeadUpdateToZapier();
+
     // Handle cancellation - show thanks message instead of WhatsApp
     if (this.userSelections.choice === 'cancel') {
       this.closeVerificationPage();
@@ -843,6 +850,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private showThanksMessage() {
+    // Send analytics data for cancellation/thanks action
+    this.sendLeadUpdateToZapier();
+    
     // Show thanks message modal
     this.showThanksModal = true;
     // Prevent body scroll when modal is open
