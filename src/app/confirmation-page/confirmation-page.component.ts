@@ -127,12 +127,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       const totalTimeInSeconds = this.totalPricingTime / 1000;
       console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
       
-      // if (totalTimeInSeconds < 5) {
-      //   // Show validation dialog asking if they checked prices
-      //   this.showPricingTimeValidation = true;
-      //   document.body.style.overflow = 'hidden';
-      //   return;
-      // }
+      if (totalTimeInSeconds < 5) {
+        // Show validation dialog asking if they checked prices
+        this.showPricingTimeValidation = true;
+        document.body.style.overflow = 'hidden';
+        return;
+      }
       
       // If user cancels, show thanks message directly
       if (this.selectedChoice === 'cancel') {
