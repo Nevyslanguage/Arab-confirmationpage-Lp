@@ -407,8 +407,26 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       form_interaction_time: formInteractionTime
     };
 
-    // Prepare Zapier webhook data
+    // Prepare Zapier webhook data for lead update
     const zapierData = {
+      // Lead identification (from previous form)
+      lead_email: this.urlParams.email,
+      lead_name: this.urlParams.name,
+      
+      // Campaign tracking data
+      campaign_name: this.urlParams.campaignName,
+      adset_name: this.urlParams.adsetName,
+      ad_name: this.urlParams.adName,
+      fb_click_id: this.urlParams.fbClickId,
+      
+      // Confirmation page data
+      confirmation_choice: this.userSelections.choice || this.selectedChoice,
+      cancellation_reasons: this.userSelections.cancellationReasons || this.selectedCancellationReasons,
+      subscription_preference: this.userSelections.subscription || this.selectedSubscription,
+      preferred_start_time: this.userSelections.startTime || this.selectedStartTime,
+      payment_access: this.userSelections.payment || this.selectedPayment,
+      
+      // Session tracking data
       session_id: this.sessionId,
       trigger: trigger,
       timestamp: new Date().toISOString(),
@@ -416,9 +434,11 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       events: events,
       user_agent: navigator.userAgent,
       page_url: window.location.href,
-      // User data from URL parameters
-      user_name: this.urlParams.name,
-      user_email: this.urlParams.email
+      
+      // Form interaction data
+      form_started: this.formStarted,
+      form_submitted: this.formSubmitted,
+      form_interaction_time: this.formStarted && this.formStartTime > 0 ? Math.round((Date.now() - this.formStartTime) / 1000) : 0
     };
 
     // Console logging for debugging
@@ -438,13 +458,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   private sendToZapier(data: any) {
     // Replace this URL with your actual Zapier webhook URL
-    const zapierWebhookUrl = 'YOUR_ZAPIER_WEBHOOK_URL_HERE';
+    const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umn6x4s/';
     
-    if (zapierWebhookUrl === 'YOUR_ZAPIER_WEBHOOK_URL_HERE') {
-      console.log('⚠️ Please update the Zapier webhook URL in the code');
-      console.log('🔗 Would send to Zapier:', data);
-      return;
-    }
+    // Webhook URL is configured, proceed with sending data
     
     // Send data to Zapier webhook
     fetch(zapierWebhookUrl, {
@@ -464,6 +480,69 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     .catch(error => {
       console.error('❌ Error sending to Zapier:', error);
     });
+  }
+
+  private sendLeadUpdateToZapier() {
+    // Calculate form interaction time
+    let formInteractionTime = 0;
+    if (this.formStarted && this.formStartTime > 0) {
+      formInteractionTime = Math.round((Date.now() - this.formStartTime) / 1000);
+    }
+
+    // Prepare events data (convert to seconds)
+    const events = {
+      session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
+      session_duration_on_levels_section: Math.round(this.sectionTimers['#levels-section']?.totalTime || 0) / 1000,
+      session_duration_on_teachers_section: Math.round(this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000,
+      session_duration_on_platform_section: Math.round(this.sectionTimers['#platform-section']?.totalTime || 0) / 1000,
+      session_duration_on_advisors_section: Math.round(this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000,
+      session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
+      session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
+      session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
+      form_started: this.formStarted,
+      form_submitted: this.formSubmitted,
+      form_interaction_time: formInteractionTime
+    };
+
+    // Prepare lead update data with full analytics
+    const leadUpdateData = {
+      // Lead identification
+      email: this.urlParams.email,
+      name: this.urlParams.name,
+      
+      // Campaign data
+      campaign_name: this.urlParams.campaignName,
+      adset_name: this.urlParams.adsetName,
+      ad_name: this.urlParams.adName,
+      fb_click_id: this.urlParams.fbClickId,
+      
+      // Confirmation responses
+      confirmation_status: this.selectedChoice === 'confirm' ? 'Confirmed Interest' : 'Cancelled',
+      choice: this.selectedChoice,
+      
+      // Detailed responses
+      cancellation_reasons: this.selectedCancellationReasons,
+      subscription_opt_in: this.selectedSubscription,
+      preferred_start_time: this.selectedStartTime,
+      payment_method_available: this.selectedPayment,
+      
+      // Analytics data
+      session_id: this.sessionId,
+      trigger: 'form_submission_start',
+      timestamp: new Date().toISOString(),
+      total_session_time: Math.round((Date.now() - this.sessionStartTime) / 1000),
+      events: events,
+      user_agent: navigator.userAgent,
+      page_url: window.location.href,
+      form_started: this.formStarted,
+      form_submitted: this.formSubmitted,
+      form_interaction_time: formInteractionTime
+    };
+
+    console.log('📋 LEAD UPDATE DATA:', leadUpdateData);
+    
+    // Send to Zapier (you'll need to replace the URL)
+    this.sendToZapier(leadUpdateData);
   }
 
   private sendToHotjar(events: any) {
@@ -866,6 +945,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Mark form as submitted when user starts the submission process
     this.formSubmitted = true;
     console.log('✅ Form submitted - User completed the form');
+    
+    // Send lead update data to Zapier
+    this.sendLeadUpdateToZapier();
     
     // Send tracking data when form submission starts
     this.sendTrackingData('form_submission_start');
