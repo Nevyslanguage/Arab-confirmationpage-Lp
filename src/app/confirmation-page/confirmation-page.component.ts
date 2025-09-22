@@ -144,14 +144,17 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     }
 
     // Check if user spent enough time on pricing section (5 seconds = 5000ms)
-    const totalTimeInSeconds = this.totalPricingTime / 1000;
-    console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
-    
-    if (totalTimeInSeconds < 5) {
-      // Show validation dialog asking if they checked prices
-      this.showPricingTimeValidation = true;
-      document.body.style.overflow = 'hidden';
-      return;
+    // Skip this validation for cancellations since they're not interested in the service
+    if (this.selectedChoice !== 'cancel') {
+      const totalTimeInSeconds = this.totalPricingTime / 1000;
+      console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
+      
+      if (totalTimeInSeconds < 5) {
+        // Show validation dialog asking if they checked prices
+        this.showPricingTimeValidation = true;
+        document.body.style.overflow = 'hidden';
+        return;
+      }
     }
     
     // Validate based on choice
@@ -174,7 +177,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
         return;
       }
       
-      this.showThanksMessage();
+      this.showThanksMessage(true); // Pass true to indicate this is a cancellation
       return;
     }
     
@@ -191,17 +194,17 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
         return;
       }
       
-      // For confirmations, collect all user selections and show verification page
+      // For confirmations, collect all user selections
       this.userSelections = {
         choice: this.selectedChoice,
         cancellationReasons: this.selectedCancellationReasons,
         subscription: this.selectedSubscription,
         startTime: this.selectedStartTime,
         payment: this.selectedPayment,
-        name: '' // Will be filled in verification page
+        name: this.urlParams.name || '' // Use name from URL parameters
       };
       
-      // Show verification page
+      // Always show verification page for confirmations (regardless of payment method)
       this.showVerificationPage = true;
       // Prevent body scroll when verification page is open
       document.body.style.overflow = 'hidden';
@@ -1054,24 +1057,16 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Handle cancellation - show thanks message instead of WhatsApp
     if (this.userSelections.choice === 'cancel') {
       this.closeVerificationPage();
-      this.showThanksMessage();
+      this.showThanksMessage(true); // Pass true to indicate this is a cancellation
       this.resetFormValues(); // Reset form after submission
       return;
     }
 
-    // Handle confirmation - check payment method
+    // Handle confirmation - always go to WhatsApp
     if (this.userSelections.choice === 'confirm') {
-      // Only go to WhatsApp if user has payment method
-      if (this.userSelections.payment === 'yesUsed') {
-        this.goToWhatsApp();
-        this.resetFormValues(); // Reset form after submission
-      } else {
-        // Show thanks message if no payment method
-        this.closeVerificationPage();
-        this.showThanksMessage();
-        this.resetFormValues(); // Reset form after submission
-        return;
-      }
+      // Always go to WhatsApp for confirmations (regardless of payment method)
+      this.goToWhatsApp();
+      this.resetFormValues(); // Reset form after submission
     }
   }
 
@@ -1095,7 +1090,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     window.open(whatsappUrl, '_blank');
   }
 
-  private showThanksMessage() {
+  private showThanksMessage(isCancellation: boolean = false) {
     // Try to send form data using the new successful Zapier service
     // Wrap in try-catch to prevent errors from breaking the UI
     try {
@@ -1106,7 +1101,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     }
     
     // Check if this is a cancellation to show success page
-    if (this.selectedChoice === 'cancel') {
+    if (isCancellation || this.selectedChoice === 'cancel') {
       this.showCancellationSuccess = true;
     } else {
       // Show thanks message modal for other cases
@@ -1270,7 +1265,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     
     // If user cancels, show thanks message directly
     if (this.selectedChoice === 'cancel') {
-      this.showThanksMessage();
+      this.showThanksMessage(true); // Pass true to indicate this is a cancellation
       this.resetFormValues(); // Reset form after submission
       return;
     }
