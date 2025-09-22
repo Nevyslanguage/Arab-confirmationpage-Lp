@@ -741,8 +741,8 @@
 </div>
   <!-- Cancellation Success Modal -->
 
-<div *ngIf="showCancellationSuccess" class="fixed inset-0 bg-white flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+<div *ngIf="showCancellationSuccess" class="fixed inset-0 bg-white flex items-center justify-center z-50" (click)="closeCancellationSuccess()">
+  <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center" (click)="$event.stopPropagation()">
     <h2 class="text-2xl font-bold text-gray-800 mb-4">تمت عملية الإرسال بنجاح</h2>
     <p class="text-gray-600">شكراً لك</p>
   </div>

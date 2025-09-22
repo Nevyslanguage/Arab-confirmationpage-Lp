@@ -144,21 +144,19 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     }
 
     // Check if user spent enough time on pricing section (5 seconds = 5000ms)
-    // Skip this validation for cancellations since they're not interested in the service
-    if (this.selectedChoice !== 'cancel') {
-      const totalTimeInSeconds = this.totalPricingTime / 1000;
-      console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
-      
-      if (totalTimeInSeconds < 5) {
-        // Show validation dialog asking if they checked prices
-        this.showPricingTimeValidation = true;
-        document.body.style.overflow = 'hidden';
-        return;
-      }
+    const totalTimeInSeconds = this.totalPricingTime / 1000;
+    console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
+    
+    if (totalTimeInSeconds < 5) {
+      // Show validation dialog asking if they checked prices
+      this.showPricingTimeValidation = true;
+      document.body.style.overflow = 'hidden';
+      return;
     }
     
     // Validate based on choice
     if (this.selectedChoice === 'cancel') {
+      console.log('🎯 Direct cancellation flow - selectedChoice is cancel');
       // For cancellation, require at least one cancellation reason
       if (this.selectedCancellationReasons.length === 0) {
         this.showValidationErrorModal('يرجى اختيار سبب واحد على الأقل للإلغاء');
@@ -177,6 +175,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
         return;
       }
       
+      console.log('🎯 Direct cancellation flow - calling showThanksMessage(true)');
       this.showThanksMessage(true); // Pass true to indicate this is a cancellation
       return;
     }
@@ -1091,6 +1090,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private showThanksMessage(isCancellation: boolean = false) {
+    console.log('🔍 showThanksMessage - isCancellation:', isCancellation, 'selectedChoice:', this.selectedChoice);
+    
     // Try to send form data using the new successful Zapier service
     // Wrap in try-catch to prevent errors from breaking the UI
     try {
@@ -1102,8 +1103,11 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     
     // Check if this is a cancellation to show success page
     if (isCancellation || this.selectedChoice === 'cancel') {
+      console.log('🎯 Showing cancellation success page');
       this.showCancellationSuccess = true;
+      // Don't reset form values here - let closeCancellationSuccess() handle it when modal is closed
     } else {
+      console.log('🎯 Showing regular thanks modal');
       // Show thanks message modal for other cases
       this.showThanksModal = true;
       // Prevent body scroll when modal is open
@@ -1238,6 +1242,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   proceedWithoutCheckingPrices() {
+    console.log('🔍 proceedWithoutCheckingPrices - selectedChoice:', this.selectedChoice);
     this.closePricingTimeValidation();
     // Continue with the original form submission logic
     this.continueWithFormSubmission();
@@ -1256,6 +1261,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // Mark form as submitted when user starts the submission process
     this.formSubmitted = true;
     console.log('✅ Form submitted - User completed the form');
+    console.log('🔍 continueWithFormSubmission - selectedChoice:', this.selectedChoice);
     
     // Send lead update data to Zapier
     this.sendLeadUpdateToZapier();
@@ -1265,8 +1271,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     
     // If user cancels, show thanks message directly
     if (this.selectedChoice === 'cancel') {
+      console.log('🎯 User cancelled - showing cancellation success page');
       this.showThanksMessage(true); // Pass true to indicate this is a cancellation
-      this.resetFormValues(); // Reset form after submission
+      // Don't reset form values here - let showThanksMessage handle it
       return;
     }
     
