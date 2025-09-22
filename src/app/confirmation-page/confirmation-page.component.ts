@@ -1161,8 +1161,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   getPaymentEnglish(payment: string): string {
     const payments: { [key: string]: string } = {
-      'yesUsed': 'Yes Used',
-      'noNoHelp': 'No Help'
+      'yesUsed': 'Yes, I am able to access payment methods',
+      'noNoHelp': 'No, I am not able to access payment methods'
     };
     return payments[payment] || payment;
   }

@@ -51,12 +51,19 @@ export class ZapierService {
       params.set('lead_source', 'Website Confirmation Page');
       params.set('status', 'New');
       
+      // Appointment status based on user response
+      const appointmentStatus = this.getAppointmentStatus(formData.selectedResponse);
+      params.set('appointment_status', appointmentStatus);
+      
       // Form responses
       params.set('response_type', formData.selectedResponse);
       params.set('cancel_reasons', formData.cancelReasons.join(', '));
       params.set('marketing_consent', formData.marketingConsent);
       params.set('english_impact', formData.englishImpact);
       params.set('preferred_start_time', formData.preferredStartTime);
+      params.set('start_time_preference', formData.preferredStartTime); // Alternative field name
+      params.set('projected_start_time', formData.preferredStartTime); // Alternative field name
+      params.set('when_to_start', formData.preferredStartTime); // Alternative field name
       params.set('payment_readiness', formData.paymentReadiness);
       params.set('pricing_response', formData.pricingResponse);
       
@@ -103,7 +110,8 @@ export class ZapierService {
     let description = `Confirmation Page Form Submission Details\n\n`;
     
     // Form responses section
-    description += `Response: ${formData.selectedResponse}\n\n`;
+    description += `Response: ${formData.selectedResponse}\n`;
+    description += `Appointment Status: ${this.getAppointmentStatus(formData.selectedResponse)}\n\n`;
     
     if (formData.cancelReasons && formData.cancelReasons.length > 0) {
       description += `Cancel Reasons: ${formData.cancelReasons.join(', ')}\n\n`;
@@ -118,7 +126,7 @@ export class ZapierService {
     }
     
     if (formData.preferredStartTime) {
-      description += `Preferred Start Time: ${formData.preferredStartTime}\n\n`;
+      description += `Projected Time to Start Classes: ${formData.preferredStartTime}\n\n`;
     }
     
     if (formData.paymentReadiness) {
@@ -163,11 +171,11 @@ export class ZapierService {
     }
     
     if (formData.totalSessionTime) {
-      description += `Total Session Time: ${formData.totalSessionTime} seconds\n`;
+      description += `Total Session Time: ${this.formatTime(formData.totalSessionTime)}\n`;
     }
     
     if (formData.formInteractionTime) {
-      description += `Form Interaction Time: ${formData.formInteractionTime} seconds\n`;
+      description += `Form Interaction Time: ${this.formatTime(formData.formInteractionTime)}\n`;
     }
     
     if (formData.events) {
@@ -175,8 +183,8 @@ export class ZapierService {
       Object.keys(formData.events).forEach(key => {
         const readableKey = this.getReadableEventName(key);
         const value = formData.events[key];
-        // Add "Seconds" for time-related fields, keep boolean values as is
-        const formattedValue = this.isTimeField(key) ? `${value} Seconds` : value;
+        // Format time-related fields with mm:ss format, keep boolean values as is
+        const formattedValue = this.isTimeField(key) ? this.formatTime(value) : value;
         description += `• ${readableKey}: ${formattedValue}\n`;
       });
     }
@@ -220,5 +228,24 @@ export class ZapierService {
     ];
     
     return timeFields.includes(fieldName);
+  }
+
+  // Format time in seconds to mm:ss format
+  private formatTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  // Get appointment status based on user response
+  private getAppointmentStatus(selectedResponse: string): string {
+    switch (selectedResponse) {
+      case 'Confirm Interest':
+        return 'confirmed';
+      case 'Cancel':
+        return 'cancelled';
+      default:
+        return ''; // blank for other responses
+    }
   }
 }
