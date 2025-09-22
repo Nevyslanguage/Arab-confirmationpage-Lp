@@ -443,14 +443,14 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
     // Prepare events data (convert to seconds)
     const events = {
-      session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
-      session_duration_on_levels_section: Math.round(this.sectionTimers['#levels-section']?.totalTime || 0) / 1000,
-      session_duration_on_teachers_section: Math.round(this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000,
-      session_duration_on_platform_section: Math.round(this.sectionTimers['#platform-section']?.totalTime || 0) / 1000,
-      session_duration_on_advisors_section: Math.round(this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000,
-      session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
-      session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
-      session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
+      session_duration_on_price_section: Math.round((this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000),
+      session_duration_on_levels_section: Math.round((this.sectionTimers['#levels-section']?.totalTime || 0) / 1000),
+      session_duration_on_teachers_section: Math.round((this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000),
+      session_duration_on_platform_section: Math.round((this.sectionTimers['#platform-section']?.totalTime || 0) / 1000),
+      session_duration_on_advisors_section: Math.round((this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000),
+      session_duration_on_testimonials_section: Math.round((this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000),
+      session_duration_on_form_section: Math.round((this.sectionTimers['#form-section']?.totalTime || 0) / 1000),
+      session_idle_time_duration: Math.round(this.idleTime.total / 1000),
       form_started: this.formStarted,
       form_submitted: this.formSubmitted,
       form_interaction_time: formInteractionTime
@@ -536,14 +536,14 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
       // Prepare events data (convert to seconds)
       const events = {
-        session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
-        session_duration_on_levels_section: Math.round(this.sectionTimers['#levels-section']?.totalTime || 0) / 1000,
-        session_duration_on_teachers_section: Math.round(this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000,
-        session_duration_on_platform_section: Math.round(this.sectionTimers['#platform-section']?.totalTime || 0) / 1000,
-        session_duration_on_advisors_section: Math.round(this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000,
-        session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
-        session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
-        session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
+        session_duration_on_price_section: Math.round((this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000),
+        session_duration_on_levels_section: Math.round((this.sectionTimers['#levels-section']?.totalTime || 0) / 1000),
+        session_duration_on_teachers_section: Math.round((this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000),
+        session_duration_on_platform_section: Math.round((this.sectionTimers['#platform-section']?.totalTime || 0) / 1000),
+        session_duration_on_advisors_section: Math.round((this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000),
+        session_duration_on_testimonials_section: Math.round((this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000),
+        session_duration_on_form_section: Math.round((this.sectionTimers['#form-section']?.totalTime || 0) / 1000),
+        session_idle_time_duration: Math.round(this.idleTime.total / 1000),
         form_started: this.formStarted,
         form_submitted: this.formSubmitted,
         form_interaction_time: formInteractionTime
@@ -661,14 +661,14 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
     // Prepare events data (convert to seconds)
     const events = {
-      session_duration_on_price_section: Math.round(this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000,
-      session_duration_on_levels_section: Math.round(this.sectionTimers['#levels-section']?.totalTime || 0) / 1000,
-      session_duration_on_teachers_section: Math.round(this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000,
-      session_duration_on_platform_section: Math.round(this.sectionTimers['#platform-section']?.totalTime || 0) / 1000,
-      session_duration_on_advisors_section: Math.round(this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000,
-      session_duration_on_testimonials_section: Math.round(this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000,
-      session_duration_on_form_section: Math.round(this.sectionTimers['#form-section']?.totalTime || 0) / 1000,
-      session_idle_time_duration: Math.round(this.idleTime.total) / 1000,
+      session_duration_on_price_section: Math.round((this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000),
+      session_duration_on_levels_section: Math.round((this.sectionTimers['#levels-section']?.totalTime || 0) / 1000),
+      session_duration_on_teachers_section: Math.round((this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000),
+      session_duration_on_platform_section: Math.round((this.sectionTimers['#platform-section']?.totalTime || 0) / 1000),
+      session_duration_on_advisors_section: Math.round((this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000),
+      session_duration_on_testimonials_section: Math.round((this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000),
+      session_duration_on_form_section: Math.round((this.sectionTimers['#form-section']?.totalTime || 0) / 1000),
+      session_idle_time_duration: Math.round(this.idleTime.total / 1000),
       form_started: this.formStarted,
       form_submitted: this.formSubmitted,
       form_interaction_time: formInteractionTime
