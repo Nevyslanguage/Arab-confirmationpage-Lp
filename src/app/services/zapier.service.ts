@@ -100,56 +100,64 @@ export class ZapierService {
 
   // Format form data into a readable description
   private formatFormDataForDescription(formData: FormData): string {
-    let description = `Confirmation Page Form Submission Details:\n\n`;
+    let description = `Confirmation Page Form Submission Details\n\n`;
     
-    description += `Response: ${formData.selectedResponse}\n`;
+    // Form responses section
+    description += `Response: ${formData.selectedResponse}\n\n`;
     
     if (formData.cancelReasons && formData.cancelReasons.length > 0) {
-      description += `Cancel Reasons: ${formData.cancelReasons.join(', ')}\n`;
+      description += `Cancel Reasons: ${formData.cancelReasons.join(', ')}\n\n`;
     }
     
     if (formData.marketingConsent) {
-      description += `Marketing Consent: ${formData.marketingConsent}\n`;
+      description += `Marketing Consent: ${formData.marketingConsent}\n\n`;
     }
     
     if (formData.englishImpact) {
-      description += `English Impact Level: ${formData.englishImpact}\n`;
+      description += `English Impact Level: ${formData.englishImpact}\n\n`;
     }
     
     if (formData.preferredStartTime) {
-      description += `Preferred Start Time: ${formData.preferredStartTime}\n`;
+      description += `Preferred Start Time: ${formData.preferredStartTime}\n\n`;
     }
     
     if (formData.paymentReadiness) {
-      description += `Payment Readiness: ${formData.paymentReadiness}\n`;
+      description += `Payment Readiness: ${formData.paymentReadiness}\n\n`;
     }
     
     if (formData.pricingResponse) {
-      description += `Pricing Feedback: ${formData.pricingResponse}\n`;
+      description += `Pricing Feedback: ${formData.pricingResponse}\n\n`;
     }
     
-    if (formData.name) {
-      description += `Name: ${formData.name}\n`;
+    // Contact information section
+    if (formData.name || formData.email) {
+      description += `Contact Information:\n`;
+      if (formData.name) {
+        description += `Name: ${formData.name}\n`;
+      }
+      if (formData.email) {
+        description += `Email: ${formData.email}\n`;
+      }
+      description += `\n`;
     }
     
-    if (formData.email) {
-      description += `Email: ${formData.email}\n`;
+    // Campaign tracking section
+    if (formData.campaignName || formData.adsetName || formData.adName) {
+      description += `Campaign Tracking:\n`;
+      if (formData.campaignName) {
+        description += `Campaign: ${formData.campaignName}\n`;
+      }
+      if (formData.adsetName) {
+        description += `Adset: ${formData.adsetName}\n`;
+      }
+      if (formData.adName) {
+        description += `Ad: ${formData.adName}\n`;
+      }
+      description += `\n`;
     }
     
-    // Campaign tracking
-    if (formData.campaignName) {
-      description += `Campaign: ${formData.campaignName}\n`;
-    }
-    
-    if (formData.adsetName) {
-      description += `Adset: ${formData.adsetName}\n`;
-    }
-    
-    if (formData.adName) {
-      description += `Ad: ${formData.adName}\n`;
-    }
-    
-    // Analytics data
+    // Analytics data section
+    description += `Analytics Data:\n`;
     if (formData.sessionId) {
       description += `Session ID: ${formData.sessionId}\n`;
     }
@@ -165,12 +173,52 @@ export class ZapierService {
     if (formData.events) {
       description += `\nAnalytics Events:\n`;
       Object.keys(formData.events).forEach(key => {
-        description += `- ${key}: ${formData.events[key]}\n`;
+        const readableKey = this.getReadableEventName(key);
+        const value = formData.events[key];
+        // Add "Seconds" for time-related fields, keep boolean values as is
+        const formattedValue = this.isTimeField(key) ? `${value} Seconds` : value;
+        description += `• ${readableKey}: ${formattedValue}\n`;
       });
     }
     
     description += `\nSubmitted on: ${new Date().toLocaleString()}`;
     
     return description;
+  }
+
+  // Convert technical event names to readable format for description only
+  private getReadableEventName(technicalName: string): string {
+    const readableNames: { [key: string]: string } = {
+      'session_duration_on_price_section': 'Time spent on Price Section',
+      'session_duration_on_levels_section': 'Time spent on Levels Section',
+      'session_duration_on_teachers_section': 'Time spent on Teachers Section',
+      'session_duration_on_platform_section': 'Time spent on Platform Section',
+      'session_duration_on_advisors_section': 'Time spent on Advisors Section',
+      'session_duration_on_testimonials_section': 'Time spent on Testimonials Section',
+      'session_duration_on_form_section': 'Time spent on Form Section',
+      'session_idle_time_duration': 'Total Idle Time',
+      'form_started': 'Form Started',
+      'form_submitted': 'Form Submitted',
+      'form_interaction_time': 'Form Interaction Time'
+    };
+    
+    return readableNames[technicalName] || technicalName;
+  }
+
+  // Check if a field is time-related and should have "Seconds" appended
+  private isTimeField(fieldName: string): boolean {
+    const timeFields = [
+      'session_duration_on_price_section',
+      'session_duration_on_levels_section',
+      'session_duration_on_teachers_section',
+      'session_duration_on_platform_section',
+      'session_duration_on_advisors_section',
+      'session_duration_on_testimonials_section',
+      'session_duration_on_form_section',
+      'session_idle_time_duration',
+      'form_interaction_time'
+    ];
+    
+    return timeFields.includes(fieldName);
   }
 }

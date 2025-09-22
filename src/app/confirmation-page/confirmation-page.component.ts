@@ -490,13 +490,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       form_interaction_time: this.formStarted && this.formStartTime > 0 ? Math.round((Date.now() - this.formStartTime) / 1000) : 0
     };
 
-    // Console logging for debugging
-    console.log('📊 TRACKING DATA SENT:', {
-      trigger: trigger,
-      sessionId: this.sessionId,
-      events: events,
-      zapierData: zapierData
-    });
+    // Console logging for debugging with better formatting
+    console.log('📊 TRACKING DATA SENT:');
+    console.log('Trigger:', trigger);
+    console.log('Session ID:', this.sessionId);
+    console.log('Events:', JSON.stringify(events, null, 2));
+    console.log('Zapier Data:', JSON.stringify(zapierData, null, 2));
 
     // Send to Zapier webhook
     this.sendToZapier(zapierData);
@@ -510,7 +509,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // In development mode, just log the data without making API calls
     if (this.isDevelopment) {
       console.log('🔧 Development mode: Logging form data (no Zapier API call)');
-      console.log('📊 Form data that would be sent:', {
+      console.log('📊 Form data that would be sent:');
+      console.log(JSON.stringify({
         selectedResponse: this.selectedChoice,
         cancelReasons: this.selectedCancellationReasons,
         marketingConsent: this.selectedSubscription,
@@ -523,7 +523,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
         adsetName: this.urlParams.adsetName,
         adName: this.urlParams.adName,
         fbClickId: this.urlParams.fbClickId
-      });
+      }, null, 2));
       return;
     }
     
@@ -595,7 +595,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // In development mode, just log the data without making API calls
     if (this.isDevelopment) {
       console.log('🔧 Development mode: Logging analytics data (no Zapier API call)');
-      console.log('📊 Analytics data that would be sent:', data);
+      console.log('📊 Analytics data that would be sent:');
+      console.log(JSON.stringify(data, null, 2));
       return;
     }
     
@@ -1118,11 +1119,11 @@ My name is ${nameFromUrl} and I confirmed my interest for English classes. Pleas
 
   getCancellationReasonText(reason: string): string {
     const reasons: { [key: string]: string } = {
-      'price': 'السعر مرتفع جداً',
-      'timing': 'الجداول الزمنية غير مناسبة',
-      'schedule': 'جدول أعمالي لا يسمح',
-      'payment': 'شكوك بشأن أمان الدفع',
-      'prefer-inperson': 'أفضل الدروس الحضورية',
+      'Price': 'السعر مرتفع جداً',
+      'Timing': 'الجداول الزمنية غير مناسبة',
+      'Schedule': 'جدول أعمالي لا يسمح',
+      'Payment': 'شكوك بشأن أمان الدفع',
+      'Prefer Inperson': 'أفضل الدروس الحضورية',
       'other': 'سبب آخر'
     };
     return reasons[reason] || reason;
@@ -1130,18 +1131,18 @@ My name is ${nameFromUrl} and I confirmed my interest for English classes. Pleas
 
   getStartTimeText(startTime: string): string {
     const times: { [key: string]: string } = {
-      'now': 'الآن',
-      'nextWeek': 'الأسبوع القادم',
-      'nextMonth': 'الشهر القادم',
-      'comingMonths': 'خلال الأشهر القادمة'
+      'Now': 'الآن',
+      'Next Week': 'الأسبوع القادم',
+      'Next Month': 'الشهر القادم',
+      'Coming Months': 'خلال الأشهر القادمة'
     };
     return times[startTime] || startTime;
   }
 
   getPaymentText(payment: string): string {
     const payments: { [key: string]: string } = {
-      'yesUsed': 'أستطيع الوصول إلى طرق الدفع',
-      'noNoHelp': 'لا أستطيع الوصول إلى طرق الدفع'
+      'Yes Used': 'أستطيع الوصول إلى طرق الدفع',
+      'No Help': 'لا أستطيع الوصول إلى طرق الدفع'
     };
     return payments[payment] || payment;
   }
