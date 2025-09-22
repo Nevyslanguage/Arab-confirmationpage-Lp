@@ -98,7 +98,7 @@ export class ZapierService {
     }
   }
 
-  // Format form data into a readable description
+  // Format form data into a readable
   private formatFormDataForDescription(formData: FormData): string {
     let description = `Confirmation Page Form Submission Details\n\n`;
     
