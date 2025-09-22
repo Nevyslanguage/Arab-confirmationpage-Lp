@@ -11,6 +11,9 @@ import { ZapierService, FormData } from '../services/zapier.service';
   styleUrl: './confirmation-page.component.css'
 })
 export class ConfirmationPageComponent implements OnInit, OnDestroy {
+  // Development flag to disable Zapier calls during development
+  private readonly isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
   constructor(private zapierService: ZapierService) {}
   selectedChoice: string = '';
   currentSlide: number = 0;
@@ -21,6 +24,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   selectedSubscription: string = '';
   selectedStartTime: string = '';
   selectedPayment: string = '';
+  otherCancellationReason: string = '';
 
   // Modal properties
   showModal: boolean = false;
@@ -31,6 +35,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   isDragging: boolean = false;
   lastMouseX: number = 0;
   lastMouseY: number = 0;
+  
+  // Touch properties
+  isTouching: boolean = false;
+  lastTouchX: number = 0;
+  lastTouchY: number = 0;
+  initialTouchDistance: number = 0;
+  initialZoomLevel: number = 1;
 
   // Pricing section timer
   showPricingPopup: boolean = false;
@@ -111,6 +122,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   // Thanks modal
   showThanksModal: boolean = false;
+  
+  // Success page modal for cancellations
+  showCancellationSuccess: boolean = false;
 
   onChoiceChange(choice: string) {
     this.selectedChoice = choice;
@@ -124,21 +138,56 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   onWhatsAppClick() {
-    if (this.selectedChoice) {
-      // Check if user spent enough time on pricing section (5 seconds = 5000ms)
-      const totalTimeInSeconds = this.totalPricingTime / 1000;
-      console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
-      
-      if (totalTimeInSeconds < 5) {
-        // Show validation dialog asking if they checked prices
-        this.showPricingTimeValidation = true;
-        document.body.style.overflow = 'hidden';
+    if (!this.selectedChoice) {
+      this.showValidationErrorModal('يرجى اختيار أحد الخيارات أولاً');
+      return;
+    }
+
+    // Check if user spent enough time on pricing section (5 seconds = 5000ms)
+    const totalTimeInSeconds = this.totalPricingTime / 1000;
+    console.log('Total time spent on pricing section:', totalTimeInSeconds, 'seconds');
+    
+    if (totalTimeInSeconds < 5) {
+      // Show validation dialog asking if they checked prices
+      this.showPricingTimeValidation = true;
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+    
+    // Validate based on choice
+    if (this.selectedChoice === 'cancel') {
+      // For cancellation, require at least one cancellation reason
+      if (this.selectedCancellationReasons.length === 0) {
+        this.showValidationErrorModal('يرجى اختيار سبب واحد على الأقل للإلغاء');
         return;
       }
       
-      // If user cancels, show thanks message directly
-      if (this.selectedChoice === 'cancel') {
-        this.showThanksMessage();
+      // If "other reason" is selected, require text input
+      if (this.selectedCancellationReasons.includes('other') && (!this.otherCancellationReason || this.otherCancellationReason.trim() === '')) {
+        this.showValidationErrorModal('يرجى كتابة السبب الآخر');
+        return;
+      }
+      
+      // Require subscription preference
+      if (!this.selectedSubscription) {
+        this.showValidationErrorModal('يرجى اختيار تفضيل الاشتراك في الرسائل');
+        return;
+      }
+      
+      this.showThanksMessage();
+      return;
+    }
+    
+    if (this.selectedChoice === 'confirm') {
+      // For confirmation, require start time
+      if (!this.selectedStartTime) {
+        this.showValidationErrorModal('يرجى اختيار متى تريد البدء');
+        return;
+      }
+      
+      // Require payment preference
+      if (!this.selectedPayment) {
+        this.showValidationErrorModal('يرجى اختيار حالة الدفع');
         return;
       }
       
@@ -156,8 +205,6 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       this.showVerificationPage = true;
       // Prevent body scroll when verification page is open
       document.body.style.overflow = 'hidden';
-    } else {
-      alert('يرجى اختيار أحد الخيارات أولاً');
     }
   }
 
@@ -185,8 +232,8 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Send tracking data before component is destroyed
-    this.sendTrackingData('component_destroy');
+    // Send tracking data before component is destroyed (page closing)
+    this.sendTrackingData('page_closing');
   }
 
   // ===== TRACKING SYSTEM METHODS =====
@@ -460,6 +507,26 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
   // New method using the successful Zapier service pattern
   private async sendFormDataToZapier() {
+    // In development mode, just log the data without making API calls
+    if (this.isDevelopment) {
+      console.log('🔧 Development mode: Logging form data (no Zapier API call)');
+      console.log('📊 Form data that would be sent:', {
+        selectedResponse: this.selectedChoice,
+        cancelReasons: this.selectedCancellationReasons,
+        marketingConsent: this.selectedSubscription,
+        preferredStartTime: this.selectedStartTime,
+        paymentReadiness: this.selectedPayment,
+        otherReason: this.otherCancellationReason,
+        name: this.urlParams.name,
+        email: this.urlParams.email,
+        campaignName: this.urlParams.campaignName,
+        adsetName: this.urlParams.adsetName,
+        adName: this.urlParams.adName,
+        fbClickId: this.urlParams.fbClickId
+      });
+      return;
+    }
+    
     try {
       // Calculate form interaction time
       let formInteractionTime = 0;
@@ -518,42 +585,70 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       
     } catch (error) {
       console.error('❌ Error sending to Zapier:', error);
+      console.log('⚠️ Continuing without Zapier integration...');
+      // Don't throw error, just log it so the app continues to work
     }
   }
 
   // Keep the old method for backward compatibility with tracking data
   private sendToZapier(data: any) {
-    // Replace this URL with your actual Zapier webhook URL
-    // const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umn6x4s/';
-    const zapierWebhookUrl = 'https://hooks.zapier.com/hooks/catch/4630879/umnemeo/';
+    // In development mode, just log the data without making API calls
+    if (this.isDevelopment) {
+      console.log('🔧 Development mode: Logging analytics data (no Zapier API call)');
+      console.log('📊 Analytics data that would be sent:', data);
+      return;
+    }
     
-    // Webhook URL is configured, proceed with sending data
+    // Try multiple webhook URLs - use the one from the service that might work better
+    const webhookUrls = [
+      'https://hooks.zapier.com/hooks/catch/4630879/umnnybh/', // From ZapierService
+      'https://hooks.zapier.com/hooks/catch/4630879/umnemeo/', // Original URL
+      'https://hooks.zapier.com/hooks/catch/4630879/umn6x4s/'  // Backup URL
+    ];
     
-    // Send data to Zapier webhook as JSON
-    fetch(zapierWebhookUrl, {
+    // Log the data being sent for debugging
+    console.log('📤 Attempting to send data to Zapier:', data);
+    
+    // Try each webhook URL until one works
+    this.tryZapierWebhooks(webhookUrls, data, 0);
+  }
+
+  private tryZapierWebhooks(urls: string[], data: any, index: number) {
+    if (index >= urls.length) {
+      console.error('❌ All Zapier webhook URLs failed');
+      return;
+    }
+
+    const currentUrl = urls[index];
+    console.log(`🔗 Trying webhook URL ${index + 1}/${urls.length}:`, currentUrl);
+    
+    // Send data to Zapier webhook as JSON with better error handling
+    fetch(currentUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      mode: 'cors'
     })
     .then(response => {
       if (response.ok) {
         console.log('✅ Successfully sent to Zapier:', data);
         console.log('📊 Data sent as JSON:', JSON.stringify(data, null, 2));
-        console.log('🔗 Webhook URL used:', zapierWebhookUrl);
+        console.log('🔗 Webhook URL used:', currentUrl);
         console.log('📋 Response status:', response.status);
         console.log('📋 Response headers:', response.headers);
       } else {
-        console.error('❌ Failed to send to Zapier:', response.status, response.statusText);
-        console.log('📊 Attempted to send:', JSON.stringify(data, null, 2));
-        console.log('🔗 Webhook URL used:', zapierWebhookUrl);
+        console.error(`❌ Failed to send to Zapier (URL ${index + 1}):`, response.status, response.statusText);
+        // Try the next URL
+        this.tryZapierWebhooks(urls, data, index + 1);
       }
     })
     .catch(error => {
-      console.error('❌ Error sending to Zapier:', error);
-      console.log('📊 Data that failed to send:', JSON.stringify(data, null, 2));
+      console.error(`❌ Error sending to Zapier (URL ${index + 1}):`, error);
+      // Try the next URL
+      this.tryZapierWebhooks(urls, data, index + 1);
     });
   }
 
@@ -670,6 +765,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     this.panX = 0;
     this.panY = 0;
     this.isDragging = false;
+    this.isTouching = false;
+    this.initialTouchDistance = 0;
+    this.initialZoomLevel = 1;
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
   }
@@ -680,6 +778,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     this.panX = 0;
     this.panY = 0;
     this.isDragging = false;
+    this.isTouching = false;
+    this.initialTouchDistance = 0;
+    this.initialZoomLevel = 1;
     // Restore body scroll
     document.body.style.overflow = 'auto';
   }
@@ -756,6 +857,79 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     if (!this.isDragging && this.zoomLevel === 1) {
       this.zoomIn();
     }
+  }
+
+  // Touch to zoom in (only when not touching and at default zoom)
+  onImageTouchStart(event: TouchEvent) {
+    if (!this.isTouching && this.zoomLevel === 1 && event.touches.length === 1) {
+      // Single tap to zoom in
+      setTimeout(() => {
+        if (!this.isTouching) {
+          this.zoomIn();
+        }
+      }, 100);
+    }
+  }
+
+  // Touch event handlers
+  onTouchStart(event: TouchEvent) {
+    event.preventDefault();
+    const touches = event.touches;
+    
+    if (touches.length === 1) {
+      // Single touch - start panning
+      this.isTouching = true;
+      this.lastTouchX = touches[0].clientX;
+      this.lastTouchY = touches[0].clientY;
+    } else if (touches.length === 2) {
+      // Two touches - start pinch zoom
+      this.isTouching = true;
+      this.initialTouchDistance = this.getTouchDistance(touches[0], touches[1]);
+      this.initialZoomLevel = this.zoomLevel;
+    }
+  }
+
+  onTouchMove(event: TouchEvent) {
+    event.preventDefault();
+    const touches = event.touches;
+    
+    if (touches.length === 1 && this.isTouching && this.zoomLevel > 1) {
+      // Single touch - panning
+      const deltaX = touches[0].clientX - this.lastTouchX;
+      const deltaY = touches[0].clientY - this.lastTouchY;
+      
+      this.panX += deltaX;
+      this.panY += deltaY;
+      
+      this.lastTouchX = touches[0].clientX;
+      this.lastTouchY = touches[0].clientY;
+    } else if (touches.length === 2 && this.isTouching) {
+      // Two touches - pinch zoom
+      const currentDistance = this.getTouchDistance(touches[0], touches[1]);
+      const scale = currentDistance / this.initialTouchDistance;
+      const newZoom = Math.max(0.5, Math.min(5, this.initialZoomLevel * scale));
+      
+      this.zoomLevel = newZoom;
+      
+      // Reset pan when zooming out to fit
+      if (this.zoomLevel <= 1) {
+        this.panX = 0;
+        this.panY = 0;
+      }
+    }
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    this.isTouching = false;
+    this.initialTouchDistance = 0;
+    this.initialZoomLevel = 1;
+  }
+
+  // Helper method to calculate distance between two touch points
+  private getTouchDistance(touch1: Touch, touch2: Touch): number {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
   }
 
 
@@ -880,6 +1054,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     if (this.userSelections.choice === 'cancel') {
       this.closeVerificationPage();
       this.showThanksMessage();
+      this.resetFormValues(); // Reset form after submission
       return;
     }
 
@@ -888,10 +1063,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       // Only go to WhatsApp if user has payment method
       if (this.userSelections.payment === 'yesUsed') {
         this.goToWhatsApp();
+        this.resetFormValues(); // Reset form after submission
       } else {
         // Show thanks message if no payment method
         this.closeVerificationPage();
         this.showThanksMessage();
+        this.resetFormValues(); // Reset form after submission
         return;
       }
     }
@@ -903,16 +1080,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     
     console.log('🔍 WhatsApp name from URL:', nameFromUrl);
     
-    // Generate personalized message based on selections
-    let message = `مرحباً، أنا ${nameFromUrl}\n\n`;
-    
-    message += 'أريد تأكيد اهتمامي بدورات اللغة الإنجليزية.\n';
-    if (this.userSelections.startTime) {
-      message += `متى أريد البدء: ${this.getStartTimeText(this.userSelections.startTime)}\n`;
-    }
-    if (this.userSelections.payment) {
-      message += `حالة الدفع: ${this.getPaymentText(this.userSelections.payment)}`;
-    }
+    // Generate personalized message using the new template
+    const message = `Hello Hala,
+My name is ${nameFromUrl} and I confirmed my interest for English classes. Please help me complete my sign-up process.`;
 
     // Hala's WhatsApp number: +1 (647) 365-4860
     const halaNumber = '16473654860'; // Remove spaces and special characters
@@ -924,16 +1094,26 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private showThanksMessage() {
-    // Send form data using the new successful Zapier service
-    this.sendFormDataToZapier();
+    // Try to send form data using the new successful Zapier service
+    // Wrap in try-catch to prevent errors from breaking the UI
+    try {
+      this.sendFormDataToZapier();
+      this.sendLeadUpdateToZapier();
+    } catch (error) {
+      console.error('⚠️ Zapier integration failed, continuing with UI:', error);
+    }
     
-    // Send analytics data for cancellation/thanks action
-    this.sendLeadUpdateToZapier();
-    
-    // Show thanks message modal
-    this.showThanksModal = true;
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
+    // Check if this is a cancellation to show success page
+    if (this.selectedChoice === 'cancel') {
+      this.showCancellationSuccess = true;
+    } else {
+      // Show thanks message modal for other cases
+      this.showThanksModal = true;
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+      // Reset form values after showing thanks message
+      this.resetFormValues();
+    }
   }
 
   getCancellationReasonText(reason: string): string {
@@ -1006,6 +1186,13 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     document.body.style.overflow = 'auto';
   }
 
+  // Close cancellation success modal and reset form
+  closeCancellationSuccess() {
+    this.showCancellationSuccess = false;
+    this.resetFormValues();
+  }
+
+
   // Pricing time validation methods
   closePricingTimeValidation() {
     this.showPricingTimeValidation = false;
@@ -1042,6 +1229,7 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     // If user cancels, show thanks message directly
     if (this.selectedChoice === 'cancel') {
       this.showThanksMessage();
+      this.resetFormValues(); // Reset form after submission
       return;
     }
     
@@ -1059,5 +1247,37 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     this.showVerificationPage = true;
     // Prevent body scroll when verification page is open
     document.body.style.overflow = 'hidden';
+  }
+
+  // Reset all form values to their default state
+  private resetFormValues() {
+    this.selectedChoice = '';
+    this.selectedCancellationReasons = [];
+    this.selectedSubscription = '';
+    this.selectedStartTime = '';
+    this.selectedPayment = '';
+    this.selectedPlan = '';
+    this.otherCancellationReason = '';
+    
+    // Reset user selections
+    this.userSelections = {
+      choice: '',
+      cancellationReasons: [],
+      subscription: '',
+      startTime: '',
+      payment: '',
+      name: ''
+    };
+    
+    // Reset form state
+    this.formStarted = false;
+    this.formSubmitted = false;
+    this.formStartTime = 0;
+    
+    // Reset modal states
+    this.showCancellationSuccess = false;
+    this.showThanksModal = false;
+    
+    console.log('🔄 Form values reset to default state');
   }
 }
