@@ -1076,9 +1076,9 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     console.log('🔍 WhatsApp name from URL:', nameFromUrl);
     
     // Generate personalized message using the new Arabic template
-    const message = `مرحباً هالة، 👋
+    const message = `مرحباً هالة، 
  أتمنى أن تكوني بخير
- اسمي ${nameFromUrl} وقد أكدتُ رغبتي في حضور دروس اللغة الإنجليزية. أرجو مساعدتي في إكمال عملية التسجيل 📝`;
+ اسمي ${nameFromUrl} وقد أكدتُ رغبتي في حضور دروس اللغة الإنجليزية. أرجو مساعدتي في إكمال عملية التسجيل `;
 
     // Hala's WhatsApp number: +1 (647) 365-4860
     const halaNumber = '16473654860'; // Remove spaces and special characters
