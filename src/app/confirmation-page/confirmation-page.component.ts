@@ -469,11 +469,11 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       fb_click_id: this.urlParams.fbClickId,
       
       // Confirmation page data
-      confirmation_choice: this.userSelections.choice || this.selectedChoice,
-      cancellation_reasons: this.userSelections.cancellationReasons || this.selectedCancellationReasons,
+      confirmation_choice: this.getChoiceEnglish(this.userSelections.choice || this.selectedChoice),
+      cancellation_reasons: this.getCancellationReasonsEnglish(this.userSelections.cancellationReasons || this.selectedCancellationReasons),
       subscription_preference: this.userSelections.subscription || this.selectedSubscription,
-      preferred_start_time: this.userSelections.startTime || this.selectedStartTime,
-      payment_access: this.userSelections.payment || this.selectedPayment,
+      preferred_start_time: this.getStartTimeEnglish(this.userSelections.startTime || this.selectedStartTime),
+      payment_access: this.getPaymentEnglish(this.userSelections.payment || this.selectedPayment),
       
       // Session tracking data
       session_id: this.sessionId,
@@ -551,12 +551,12 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
 
       // Prepare form data in the successful format with analytics
       const formData: FormData = {
-        selectedResponse: this.selectedChoice,
-        cancelReasons: this.selectedCancellationReasons,
+        selectedResponse: this.getChoiceEnglish(this.selectedChoice),
+        cancelReasons: this.getCancellationReasonsEnglish(this.selectedCancellationReasons),
         marketingConsent: this.selectedSubscription,
         englishImpact: 'Not Applicable', // This form doesn't have English impact question
-        preferredStartTime: this.selectedStartTime,
-        paymentReadiness: this.selectedPayment,
+        preferredStartTime: this.getStartTimeEnglish(this.selectedStartTime),
+        paymentReadiness: this.getPaymentEnglish(this.selectedPayment),
         pricingResponse: this.selectedPlan || 'Not Selected',
         name: this.urlParams.name,
         email: this.urlParams.email,
@@ -692,10 +692,10 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
       choice: this.selectedChoice,
       
       // Detailed responses
-      cancellation_reasons: this.selectedCancellationReasons,
+      cancellation_reasons: this.getCancellationReasonsEnglish(this.selectedCancellationReasons),
       subscription_opt_in: this.selectedSubscription,
-      preferred_start_time: this.selectedStartTime,
-      payment_method_available: this.selectedPayment,
+      preferred_start_time: this.getStartTimeEnglish(this.selectedStartTime),
+      payment_method_available: this.getPaymentEnglish(this.selectedPayment),
       
       // Analytics data
       session_id: this.sessionId,
@@ -1131,20 +1131,60 @@ My name is ${nameFromUrl} and I confirmed my interest for English classes. Pleas
 
   getStartTimeText(startTime: string): string {
     const times: { [key: string]: string } = {
-      'Now': 'الآن',
-      'Next Week': 'الأسبوع القادم',
-      'Next Month': 'الشهر القادم',
-      'Coming Months': 'خلال الأشهر القادمة'
+      'now': 'الآن',
+      'nextWeek': 'الأسبوع القادم',
+      'nextMonth': 'الشهر القادم',
+      'comingMonths': 'خلال الأشهر القادمة'
     };
     return times[startTime] || startTime;
   }
 
   getPaymentText(payment: string): string {
     const payments: { [key: string]: string } = {
-      'Yes Used': 'أستطيع الوصول إلى طرق الدفع',
-      'No Help': 'لا أستطيع الوصول إلى طرق الدفع'
+      'yesUsed': 'أستطيع الوصول إلى طرق الدفع',
+      'noNoHelp': 'لا أستطيع الوصول إلى طرق الدفع'
     };
     return payments[payment] || payment;
+  }
+
+  // Convert technical values to readable English for Zapier submission
+  getStartTimeEnglish(startTime: string): string {
+    const times: { [key: string]: string } = {
+      'now': 'Now',
+      'nextWeek': 'Next Week',
+      'nextMonth': 'Next Month',
+      'comingMonths': 'Coming Months'
+    };
+    return times[startTime] || startTime;
+  }
+
+  getPaymentEnglish(payment: string): string {
+    const payments: { [key: string]: string } = {
+      'yesUsed': 'Yes Used',
+      'noNoHelp': 'No Help'
+    };
+    return payments[payment] || payment;
+  }
+
+  getChoiceEnglish(choice: string): string {
+    const choices: { [key: string]: string } = {
+      'confirm': 'Confirm Interest',
+      'cancel': 'Cancel'
+    };
+    return choices[choice] || choice;
+  }
+
+  getCancellationReasonsEnglish(reasons: string[]): string[] {
+    const reasonMap: { [key: string]: string } = {
+      'price': 'Price is too high',
+      'timing': 'Timing is not suitable',
+      'schedule': 'My schedule does not allow',
+      'payment': 'Doubts about payment security',
+      'prefer-inperson': 'I prefer in-person lessons',
+      'other': 'Other reason'
+    };
+    
+    return reasons.map(reason => reasonMap[reason] || reason);
   }
 
   // Validation methods

@@ -315,17 +315,17 @@
                        #timingCheckbox (change)="onCancellationReasonChange('timing', timingCheckbox.checked)">
                 <span class="text-base" [class.text-white]="isCancellationReasonSelected('timing')" [class.text-gray-800]="!isCancellationReasonSelected('timing')">الجداول الزمنية غير مناسبة لي</span>
               </label>
-              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+              <label class="flex items-start space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
                      [style.background-color]="isCancellationReasonSelected('schedule') ? '#054e6d' : 'white'">
-                <input type="checkbox" class="w-5 h-5 rounded border-2 border-gray-300" style="accent-color: #054e6d;"
+                <input type="checkbox" class="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0 mt-0.5" style="accent-color: #054e6d;"
                        #scheduleCheckbox (change)="onCancellationReasonChange('schedule', scheduleCheckbox.checked)">
-                <span class="text-base" [class.text-white]="isCancellationReasonSelected('schedule')" [class.text-gray-800]="!isCancellationReasonSelected('schedule')">جدول أعمالي الحالي لا يسمح لي بحضور الدروس (كنت أستعلم فقط)</span>
+                <span class="text-base flex-1" [class.text-white]="isCancellationReasonSelected('schedule')" [class.text-gray-800]="!isCancellationReasonSelected('schedule')">جدول أعمالي الحالي لا يسمح لي بحضور الدروس (كنت أستعلم فقط)</span>
               </label>
-              <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
+              <label class="flex items-start space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
                      [style.background-color]="isCancellationReasonSelected('payment') ? '#054e6d' : 'white'">
-                <input type="checkbox" class="w-5 h-5 rounded border-2 border-gray-300" style="accent-color: #054e6d;"
+                <input type="checkbox" class="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0 mt-0.5" style="accent-color: #054e6d;"
                        #paymentCheckbox (change)="onCancellationReasonChange('payment', paymentCheckbox.checked)">
-                <span class="text-base" [class.text-white]="isCancellationReasonSelected('payment')" [class.text-gray-800]="!isCancellationReasonSelected('payment')">لدي شكوك بشأن أمان وموثوقية الدفع الإلكتروني بالبطاقة لدى المؤسسة</span>
+                <span class="text-base flex-1" [class.text-white]="isCancellationReasonSelected('payment')" [class.text-gray-800]="!isCancellationReasonSelected('payment')">لدي شكوك بشأن أمان وموثوقية الدفع الإلكتروني بالبطاقة لدى المؤسسة</span>
               </label>
               <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
                      [style.background-color]="isCancellationReasonSelected('prefer-inperson') ? '#054e6d' : 'white'">
@@ -401,18 +401,18 @@
             
             <!-- Payment Question -->
             <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-              <p class="text-gray-800 mb-4">طرق الدفع المقبولة هي بطاقات الخصم/الائتمان و PayPal</p>
+              <p class="text-gray-800 mb-4">طرق الدفع المقبولة هي بطاقات الائتمان وباي بال.</p>
               
               <div class="space-y-1">
                 <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
                        [style.background-color]="selectedPayment === 'yesUsed' ? '#054e6d' : 'white'">
                   <input type="radio" name="payment" value="yesUsed" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onPaymentChange('yesUsed')">
-                  <span class="text-base" [class.text-white]="selectedPayment === 'yesUsed'" [class.text-gray-800]="selectedPayment !== 'yesUsed'">أستطيع الوصول إلى طرق الدفع</span>
+                  <span class="text-base" [class.text-white]="selectedPayment === 'yesUsed'" [class.text-gray-800]="selectedPayment !== 'yesUsed'">أستطيع الوصول إلى طرق الدفع.</span>
                 </label>
                 <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-3 rounded-lg border border-gray-300 shadow-sm transition-all duration-200 hover:bg-gray-50"
                        [style.background-color]="selectedPayment === 'noNoHelp' ? '#054e6d' : 'white'">
                   <input type="radio" name="payment" value="noNoHelp" class="w-5 h-5" style="accent-color: #054e6d;" (change)="onPaymentChange('noNoHelp')">
-                  <span class="text-base" [class.text-white]="selectedPayment === 'noNoHelp'" [class.text-gray-800]="selectedPayment !== 'noNoHelp'">لا أستطيع الوصول إلى طرق الدفع</span>
+                  <span class="text-base" [class.text-white]="selectedPayment === 'noNoHelp'" [class.text-gray-800]="selectedPayment !== 'noNoHelp'">لا أستطيع الوصول إلى طرق الدفع.</span>
                 </label>
               </div>
             </div>
@@ -485,7 +485,7 @@
       
       <!-- Community Text -->
       <div class="text-center">
-        <p class="text-gray-700 text-lg font-medium">20k+ Online community in 8+ years</p>
+        <p class="text-gray-700 text-lg font-medium">لدينا أكثر من 20 ألف مشترك منذ عام 2017.</p>
       </div>
     </div>
   </footer>
@@ -531,33 +531,27 @@
     <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4" (click)="$event.stopPropagation()">
       <!-- Header -->
       <div class="p-6 border-b border-gray-200">
-        <h3 class="text-2xl font-bold text-gray-800 text-center">أي الخطط تناسبك أكثر؟</h3>
+        <h3 class="text-2xl font-bold text-gray-800 text-center">اختر الباقة التي تفضلها</h3>
       </div>
       
       <!-- Plan Options -->
       <div class="p-6 space-y-4">
-        <button (click)="onPlanSelect('individual')" 
+        <button (click)="onPlanSelect('light')" 
                 class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
-          <div class="font-semibold text-gray-800">دروس فردية</div>
-          <div class="text-sm text-gray-600">درس واحد مع مدرس خاص</div>
+          <div class="font-semibold text-gray-800">📘 البرنامج الخفيف — 90 دولار أمريكي / 130 دولار كندي شهريًا</div>
+          <div class="text-sm text-gray-600 mt-2">✔️ ما يصل الى 3 ساعات من الدروس أسبوعيًا - للأشخاص المشغولين جدًا الذين يرغبون في التقدم بوتيرتهم الخاصة.</div>
         </button>
         
-        <button (click)="onPlanSelect('group')" 
+        <button (click)="onPlanSelect('regular')" 
                 class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
-          <div class="font-semibold text-gray-800">دروس جماعية</div>
-          <div class="text-sm text-gray-600">دروس مع مجموعة صغيرة</div>
+          <div class="font-semibold text-gray-800">📗 البرنامج المنتظم — 110 دولار أمريكي / 150 دولار كندي شهريًا</div>
+          <div class="text-sm text-gray-600 mt-2">✔️ ما يصل الى 6 ساعات من الدروس أسبوعيا - مثالي لمن يستطيعون تخصيص وقت أسبوعي ويرغبون في تحقيق تقدم منتظم.</div>
         </button>
         
         <button (click)="onPlanSelect('intensive')" 
                 class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
-          <div class="font-semibold text-gray-800">برنامج مكثف</div>
-          <div class="text-sm text-gray-600">تعلم سريع ومكثف</div>
-        </button>
-        
-        <button (click)="onPlanSelect('not-sure')" 
-                class="w-full p-4 text-right border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-200">
-          <div class="font-semibold text-gray-800">لست متأكداً</div>
-          <div class="text-sm text-gray-600">أحتاج مساعدة في الاختيار</div>
+          <div class="font-semibold text-gray-800">📕 البرنامج المكثف — 130 دولار أمريكي / 200 دولار كندي شهريًا</div>
+          <div class="text-sm text-gray-600 mt-2">✔️ ما يصل الى 10 ساعات من الدروس أسبوعيا - للأشخاص الذين يتمتعون بحافز عالي ويحتاجون إلى نتائج سريعة.</div>
         </button>
       </div>
       
@@ -607,7 +601,6 @@
         <!-- Header -->
         <div class="p-6 border-b border-gray-200">
           <h3 class="text-2xl font-bold text-gray-800 text-center">تأكيد اختياراتك</h3>
-          <p class="text-gray-600 text-center mt-2">يرجى مراجعة اختياراتك</p>
         </div>
         
         <!-- Content -->
@@ -661,11 +654,11 @@
       <!-- Actions -->
       <div class="p-6 border-t border-gray-200 flex space-x-3 space-x-reverse">
         <button (click)="closeVerificationPage()" 
-                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                class="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200" style="font-size: 12px">
           تعديل
         </button>
         <button (click)="proceedToWhatsApp()" 
-                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 space-x-reverse">
+                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 space-x-reverse px-1" style="font-size: 12px">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
           </svg>
@@ -719,24 +712,24 @@
             </svg>
           </div>
         </div>
-        <h3 class="text-xl font-bold text-gray-800 text-center">تأكيد الأسعار</h3>
+        <h3 class="text-xl font-bold text-gray-800 text-center">يرجى التأكيد:</h3>
       </div>
       
       <!-- Content -->
       <div class="p-6">
         <p class="text-gray-600 text-center mb-6">
-          هل تأكدت من مراجعة الأسعار والبرامج المتاحة؟ نريد التأكد من أنك اطلعت على جميع الخيارات قبل المتابعة.
+          هل اطلعت على البرامج المتاحة والأسعار؟ نريد التأكد من أنك اطلعت على جميع الخيارات قبل المتابعة 🙂.
         </p>
         
         <!-- Action Buttons -->
         <div class="flex space-x-3 space-x-reverse">
           <button (click)="goBackToCheckPrices()" 
-                  class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
-            نعم، دعني أراجع الأسعار
+                  class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors duration-200" style="font-size: 12px">
+            لا، دعني أتحقق من الأسعار
           </button>
           <button (click)="proceedWithoutCheckingPrices()" 
-                  class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
-            متابعة بدون مراجعة
+                  class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition-colors duration-200" style="font-size: 12px">
+            نعم، لقد اطلعت على الأسعار مسبقًا
           </button>
         </div>
       </div>
