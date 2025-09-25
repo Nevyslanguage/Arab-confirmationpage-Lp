@@ -234,8 +234,20 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Send tracking data before component is destroyed (page closing)
-    this.sendTrackingData('page_closing');
+    // Check if user made any form choice (confirm or cancel)
+    const hasMadeChoice = this.selectedChoice === 'confirm' || this.selectedChoice === 'cancel';
+    
+    // Check if user actually submitted the form (completed the process)
+    const hasCompletedForm = this.formSubmitted;
+    
+    if (!hasMadeChoice || !hasCompletedForm) {
+      // User left without making a choice OR made a choice but didn't complete the form
+      console.log('📊 Component destroyed - User left without completing form - sending no_decision data');
+      this.sendNoDecisionData();
+    } else {
+      // User made a choice AND completed the form - send regular tracking data
+      this.sendTrackingData('page_closing');
+    }
   }
 
   // ===== TRACKING SYSTEM METHODS =====
@@ -418,9 +430,45 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
   }
 
   private setupPageUnloadTracking() {
+    // Track when user leaves the page
     window.addEventListener('beforeunload', () => {
-      this.sendTrackingData('page_unload');
+      this.handlePageExit();
     });
+    
+    // Also track when user navigates away (for SPA navigation)
+    window.addEventListener('pagehide', () => {
+      this.handlePageExit();
+    });
+    
+    // Track when component is destroyed (Angular lifecycle)
+    window.addEventListener('unload', () => {
+      this.handlePageExit();
+    });
+  }
+
+  private handlePageExit() {
+    // Check if user made any form choice (confirm or cancel)
+    const hasMadeChoice = this.selectedChoice === 'confirm' || this.selectedChoice === 'cancel';
+    
+    // Check if user actually submitted the form (completed the process)
+    const hasCompletedForm = this.formSubmitted;
+    
+    console.log('📊 Page exit detected:', {
+      hasMadeChoice,
+      selectedChoice: this.selectedChoice,
+      formStarted: this.formStarted,
+      formSubmitted: this.formSubmitted,
+      hasCompletedForm
+    });
+    
+    if (!hasMadeChoice || !hasCompletedForm) {
+      // User left without making a choice OR made a choice but didn't complete the form
+      console.log('📊 User left without completing form - sending no_decision data');
+      this.sendNoDecisionData();
+    } else {
+      // User made a choice AND completed the form - send regular tracking data
+      this.sendTrackingData('page_unload');
+    }
   }
 
   private sendTrackingData(trigger: string) {
@@ -504,6 +552,102 @@ export class ConfirmationPageComponent implements OnInit, OnDestroy {
     
     // TODO: Send to Hotjar
     // this.sendToHotjar(events);
+  }
+
+  // Send data for users who left without making any choice
+  private async sendNoDecisionData() {
+    // In development mode, just log the data without making API calls
+    if (this.isDevelopment) {
+      console.log('🔧 Development mode: Logging no-decision data (no Zapier API call)');
+      console.log('📊 No-decision data that would be sent:');
+      console.log(JSON.stringify({
+        selectedResponse: 'No Decision Made',
+        cancelReasons: [],
+        marketingConsent: '',
+        englishImpact: 'Not Applicable',
+        preferredStartTime: '',
+        paymentReadiness: '',
+        pricingResponse: this.selectedPlan || 'Not Selected',
+        getAppointmentStatus: '', // Empty string for no-decision users
+        name: this.urlParams.name,
+        email: this.urlParams.email,
+        campaignName: this.urlParams.campaignName,
+        adsetName: this.urlParams.adsetName,
+        adName: this.urlParams.adName,
+        fbClickId: this.urlParams.fbClickId,
+        sessionId: this.sessionId,
+        trigger: 'no_decision_page_exit',
+        timestamp: new Date().toISOString(),
+        totalSessionTime: Math.round((Date.now() - this.sessionStartTime) / 1000),
+        formStarted: this.formStarted,
+        formSubmitted: false,
+        formInteractionTime: this.formStarted && this.formStartTime > 0 ? Math.round((Date.now() - this.formStartTime) / 1000) : 0
+      }, null, 2));
+      return;
+    }
+    
+    try {
+      // Calculate form interaction time
+      let formInteractionTime = 0;
+      if (this.formStarted && this.formStartTime > 0) {
+        formInteractionTime = Math.round((Date.now() - this.formStartTime) / 1000);
+      }
+
+      // Prepare events data (convert to seconds)
+      const events = {
+        session_duration_on_price_section: Math.round((this.sectionTimers['#pricing-section']?.totalTime || 0) / 1000),
+        session_duration_on_levels_section: Math.round((this.sectionTimers['#levels-section']?.totalTime || 0) / 1000),
+        session_duration_on_teachers_section: Math.round((this.sectionTimers['#teachers-section']?.totalTime || 0) / 1000),
+        session_duration_on_platform_section: Math.round((this.sectionTimers['#platform-section']?.totalTime || 0) / 1000),
+        session_duration_on_advisors_section: Math.round((this.sectionTimers['#consultants-section']?.totalTime || 0) / 1000),
+        session_duration_on_testimonials_section: Math.round((this.sectionTimers['#carousel-section']?.totalTime || 0) / 1000),
+        session_duration_on_form_section: Math.round((this.sectionTimers['#form-section']?.totalTime || 0) / 1000),
+        session_idle_time_duration: Math.round(this.idleTime.total / 1000),
+        form_started: this.formStarted,
+        form_submitted: false, // They didn't submit anything
+        form_interaction_time: formInteractionTime
+      };
+
+      // Prepare form data for users who left without making a decision
+      const formData: FormData = {
+        selectedResponse: 'No Decision Made',
+        cancelReasons: [],
+        marketingConsent: '',
+        englishImpact: 'Not Applicable',
+        preferredStartTime: '',
+        paymentReadiness: '',
+        pricingResponse: this.selectedPlan || 'Not Selected',
+        getAppointmentStatus: '', // Empty string for no-decision users
+        name: this.urlParams.name,
+        email: this.urlParams.email,
+        campaignName: this.urlParams.campaignName,
+        adsetName: this.urlParams.adsetName,
+        adName: this.urlParams.adName,
+        fbClickId: this.urlParams.fbClickId,
+        // Analytics data
+        sessionId: this.sessionId,
+        trigger: 'no_decision_page_exit',
+        timestamp: new Date().toISOString(),
+        totalSessionTime: Math.round((Date.now() - this.sessionStartTime) / 1000),
+        events: events,
+        userAgent: navigator.userAgent,
+        pageUrl: window.location.href,
+        formStarted: this.formStarted,
+        formSubmitted: false,
+        formInteractionTime: formInteractionTime
+      };
+
+      console.log('📤 Sending no-decision data to Zapier:', formData);
+      
+      // Send using the new service
+      const response = await this.zapierService.sendToZapier(formData);
+      console.log('✅ Successfully sent no-decision data to Zapier:', response);
+      
+    } catch (error) {
+      console.error('❌ Error sending no-decision data to Zapier:', error);
+      console.log('⚠️ Continuing without Zapier integration...');
+      // Don't throw error, just log it so the app continues to work
+    }
   }
 
   // New method using the successful Zapier service pattern

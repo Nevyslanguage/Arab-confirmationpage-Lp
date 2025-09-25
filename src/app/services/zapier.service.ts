@@ -10,6 +10,7 @@ export interface FormData {
   preferredStartTime: string;
   paymentReadiness: string;
   pricingResponse: string;
+  getAppointmentStatus?: string; // Track appointment status for all users
   name?: string;
   email?: string;
   campaignName?: string;
@@ -51,8 +52,8 @@ export class ZapierService {
       params.set('lead_source', 'Website Confirmation Page');
       params.set('status', 'New');
       
-      // Appointment status based on user response
-      const appointmentStatus = this.getAppointmentStatus(formData.selectedResponse);
+      // Appointment status - use explicit field if provided, otherwise derive from response
+      const appointmentStatus = formData.getAppointmentStatus || this.getAppointmentStatus(formData.selectedResponse);
       params.set('appointment_status', appointmentStatus);
       
       // Form responses
@@ -111,7 +112,7 @@ export class ZapierService {
     
     // Form responses section
     description += `Response: ${formData.selectedResponse}\n`;
-    description += `Appointment Status: ${this.getAppointmentStatus(formData.selectedResponse)}\n\n`;
+    description += `Appointment Status: ${formData.getAppointmentStatus || this.getAppointmentStatus(formData.selectedResponse)}\n\n`;
     
     if (formData.cancelReasons && formData.cancelReasons.length > 0) {
       description += `Cancel Reasons: ${formData.cancelReasons.join(', ')}\n\n`;
@@ -245,7 +246,7 @@ export class ZapierService {
       case 'Cancel':
         return 'cancelled';
       default:
-        return ''; // blank for other responses
+        return ''; // blank for other responses including "No Decision Made"
     }
   }
 }
